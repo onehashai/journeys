@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include journeys *.css
+recursive-include journeys *.csv
+recursive-include journeys *.html
+recursive-include journeys *.ico
+recursive-include journeys *.js
+recursive-include journeys *.json
+recursive-include journeys *.md
+recursive-include journeys *.png
+recursive-include journeys *.py
+recursive-include journeys *.svg
+recursive-include journeys *.txt
+recursive-exclude journeys *.pyc
