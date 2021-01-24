@@ -90,7 +90,7 @@ doc_events = {
 	}
 }
 
-on_session_creation = [
+on_login = [
 	"journeys.limits.check_if_expired"
 ]
 
