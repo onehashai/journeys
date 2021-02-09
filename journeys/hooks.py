@@ -109,7 +109,12 @@ scheduler_events = {
  	"hourly": [
  		"journeys.limits.update_space_usage",
 		"journeys.limits.update_site_usage"
- 	]
+ 	],
+	 "cron": {
+        "*/15 * * * *": [
+            "journeys.journeys.doctype.indiamart_settings.indiamart_settings.sync_enquiry"
+        ]
+    }
 # 	"weekly": [
 # 		"journeys.tasks.weekly"
 # 	]
