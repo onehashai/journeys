@@ -44,7 +44,9 @@ def setup_custom_fields():
 			dict(fieldname='indiamart_query_id', label='IndiaMart Query Id',
 				fieldtype='Data', insert_after='series', read_only=1, print_hide=1),
 			dict(fieldname='indiamart_qtype', label='IndiaMart Lead Source',
-				fieldtype='Data', insert_after='indiamart_query_id', read_only=1, print_hide=1)
+				fieldtype='Data', insert_after='indiamart_query_id', read_only=1, print_hide=1),
+			dict(fieldname='enq_message', label='Enquiry Message',
+				fieldtype='Small Text', insert_after='customer_name', read_only=1, print_hide=1)
 		]
 		
 	}
@@ -110,7 +112,7 @@ def sync_enquiry():
 					"customer_name":opportunity["SENDERNAME"],
 					"opportunity_date":opportunity["DATE_RE"],
 					"address_display":opportunity["ENQ_ADDRESS"],
-					"to_discuss":opportunity["ENQ_MESSAGE"],
+					"enq_message":opportunity["ENQ_MESSAGE"],
 					"source":"IndiaMart"
 				})
 				result = make_new_lead_if_required(opportunity)				
