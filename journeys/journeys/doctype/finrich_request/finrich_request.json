@@ -13,7 +13,8 @@
   "status",
   "request_data",
   "traceback",
-  "message"
+  "message",
+  "request_for"
  ],
  "fields": [
   {
@@ -82,11 +83,17 @@
    "fieldtype": "Code",
    "label": "Message",
    "read_only": 1
+  },
+  {
+   "fieldname": "request_for",
+   "fieldtype": "Select",
+   "label": "Request For",
+   "options": "Basic\nSummary"
   }
  ],
  "in_create": 1,
- "modified": "2021-02-11 05:16:49.746161",
- "modified_by": "Administrator",
+ "modified": "2021-02-22 10:25:36.909505",
+ "modified_by": "narendra@onehash.ai",
  "module": "Journeys",
  "name": "FinRich Request",
  "owner": "Administrator",

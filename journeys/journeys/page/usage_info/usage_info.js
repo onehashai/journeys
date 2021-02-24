@@ -15,6 +15,7 @@ frappe.pages['usage-info'].on_page_load = function(wrapper) {
 	frappe.call({
 		method: "journeys.limits.get_usage_info",
 		callback: function(r) {
+			console.log(r);
 			var usage_info = r.message;
 			if (!usage_info) {
 				// nothing to show
@@ -26,6 +27,7 @@ frappe.pages['usage-info'].on_page_load = function(wrapper) {
 			let database_percent = (limits.space_usage.database_size / limits.space) * 100;
 			let files_percent = (limits.space_usage.files_size / limits.space) * 100;
 			let backup_percent = (limits.space_usage.backup_size / limits.space) * 100;
+			let addon_limits = usage_info.addon_limits;
 
 			let total_consumed = database_percent + files_percent + backup_percent;
 
@@ -47,12 +49,14 @@ frappe.pages['usage-info'].on_page_load = function(wrapper) {
 				database_percent,
 				files_percent,
 				backup_percent,
-				usage_message
+				usage_message,
+				addon_limits
 			}))).appendTo(page.main);
 
 			var btn_text = usage_info.limits.users == 1 ? __("Upgrade") : __("Renew / Upgrade");
 			$(page.main).find('.btn-primary').html(btn_text).on('click', () => {
-				window.open(usage_info.upgrade_url);
+				let open_link = (usage_info.upgrade_url)?upgrade_url:("mailto:"+usage_info.support_email+"?subject=Upgrade Site");
+				window.open(open_link);
 			});
 		}
 	});

@@ -1,5 +1,5 @@
 <div>
-	{% if limits.upgrade_url %}
+	{% if not limits.upgrade_url %}
 	<div class="upgrade-message padding" style="border-bottom: 1px solid #d0d8dc;">
 		{% if limits.expiry %}
 			<h4>{{ __("You have {0} days left in your subscription", [days_to_expiry]) }}</h4>
@@ -64,5 +64,16 @@
 
 		<p>{{ usage_message }}</p>
 	</div>
+	{% endif %}
+
+	{% if addon_limits %}
+	<div class="usage-info-section" style="margin: 30px;">
+	    <h4>{{ __(addon_limits.FinRich.service_name) }}</h4>
+		<span class="indicator blue" style="margin-right: 20px;">
+			{{ __("Available Credits:") }} {{ __(addon_limits.FinRich.available_credits) }}
+		</span>
+		<p><button class="btn btn-primary btn-sm primary-action">Buy Credits</button></p>
+	</div>
+	
 	{% endif %}
 </div>

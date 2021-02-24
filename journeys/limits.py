@@ -124,6 +124,7 @@ def get_usage_info():
 	if limits.upgrade_url:
 		usage_info['upgrade_url'] = get_upgrade_url(limits.upgrade_url)
 
+	usage_info["addon_limits"] = get_addon_limits()
 	return usage_info
 
 def get_upgrade_url(upgrade_url):
@@ -155,6 +156,9 @@ def get_limits():
 		}limits"
 	'''
 	return frappe._dict(frappe.local.conf.limits or {})
+
+def get_addon_limits():
+	return frappe._dict(frappe.local.conf.addon_limits or {})
 
 def update_limits(limits_dict):
 	'''Add/Update limit in site_config'''
