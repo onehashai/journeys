@@ -67,13 +67,25 @@
 	{% endif %}
 
 	{% if addon_limits %}
+	{% if addon_limits.profile_enrich %}
 	<div class="usage-info-section" style="margin: 30px;">
 	    <h4>{{ __(addon_limits.FinRich.service_name) }}</h4>
 		<span class="indicator blue" style="margin-right: 20px;">
 			{{ __("Available Credits:") }} {{ __(addon_limits.FinRich.available_credits) }}
 		</span>
-		<p><button class="btn btn-primary btn-sm primary-action">Buy Credits</button></p>
+		<p><button class="btn btn-primary btn-sm primary-action addon-service" data-service_name="FinRich">Buy Credits</button></p>
 	</div>
+	{% endif %}
+	{% if addon_limits["Profile Enrich"] %}
+	<div class="usage-info-section" style="margin: 30px;">
+	    <h4>{{ __(addon_limits["Profile Enrich"].service_name) }}</h4>
+		<span class="indicator blue" style="margin-right: 20px;">
+			{{ __("Available Credits:") }} {{ __(addon_limits["Profile Enrich"].available_credits) }}
+		</span>
+		<p><button class="btn btn-primary btn-sm primary-action addon-service" data-service_name="{{ __(addon_limits['Profile Enrich'].service_name) }}">Buy Credits</button></p>
+	</div>
+	
+	{% endif %}
 	
 	{% endif %}
 </div>

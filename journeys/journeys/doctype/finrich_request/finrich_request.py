@@ -138,3 +138,4 @@ def get_cin_by_name(company_name):
 		return response
 	except Exception as e:
 		frappe.log_error(frappe.get_traceback())
+		
