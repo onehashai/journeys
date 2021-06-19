@@ -1,0 +1,48 @@
+{
+ "actions": [],
+ "creation": "2021-05-21 19:01:07.163602",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "system_notification",
+  "email_notification"
+ ],
+ "fields": [
+  {
+   "default": "0",
+   "fieldname": "system_notification",
+   "fieldtype": "Check",
+   "label": "System Notification"
+  },
+  {
+   "default": "0",
+   "fieldname": "email_notification",
+   "fieldtype": "Check",
+   "label": "Email Notification"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2021-05-21 19:01:07.163602",
+ "modified_by": "Administrator",
+ "module": "Journeys",
+ "name": "Event Notification Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
