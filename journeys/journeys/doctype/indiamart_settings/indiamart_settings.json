@@ -1,0 +1,60 @@
+{
+ "creation": "2021-01-31 21:23:31.746070",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "enable_indiamart",
+  "crm_key",
+  "registered_mobile",
+  "last_sync_time"
+ ],
+ "fields": [
+  {
+   "default": "0",
+   "fieldname": "enable_indiamart",
+   "fieldtype": "Check",
+   "label": "Enable IndiaMart"
+  },
+  {
+   "fieldname": "crm_key",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "CRM Key",
+   "reqd": 1
+  },
+  {
+   "fieldname": "last_sync_time",
+   "fieldtype": "Datetime",
+   "label": "Last Sync Time",
+   "read_only": 1
+  },
+  {
+   "fieldname": "registered_mobile",
+   "fieldtype": "Data",
+   "label": "Registered Mobile",
+   "options": "Phone",
+   "reqd": 1
+  }
+ ],
+ "issingle": 1,
+ "modified": "2021-02-01 00:35:46.792957",
+ "modified_by": "Administrator",
+ "module": "Journeys",
+ "name": "IndiaMart Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
