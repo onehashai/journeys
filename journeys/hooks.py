@@ -33,6 +33,7 @@ app_license = "MIT"
 
 doctype_js = {
     'Lead': 'public/js/lead.js',
+	'User': 'public/js/user.js'
 }
 # Home Pages
 # ----------
