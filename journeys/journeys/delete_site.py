@@ -14,14 +14,12 @@ def delete_site():
         return "Permission Error"
     try:
         config = frappe.get_site_config()
-        facebook_config = config.get("facebook_config") if config.get("facebook_config") else {}
-        master_domain = facebook_config.get("master_domain")
+        master_domain = config.get("master_site_name")
         if master_domain:
             commands = ["bench --site {} execute --args '{}' better_saas.better_saas.doctype.saas_user.saas_user.delete_site".format(master_domain, frappe.local.site)]
             frappe.enqueue('bench_manager.bench_manager.utils.run_command',
                 commands = commands,
-                doctype = "Saas Site",
-                docname = frappe.local.site or None,
+                doctype = "Bench Settings",
                 key = today() + " " + nowtime()
                 )
             return "Success"
