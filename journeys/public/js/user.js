@@ -1,6 +1,6 @@
 frappe.ui.form.on('User', {
     onload: function(frm) {
-    if (frappe.user.has_role("System Manager")) {
+    if (frappe.user.has_role("System Manager") && frappe.session.user == frm.doc.name) {
         frm.add_custom_button(__('Delete Site'), function () {
             frappe.confirm('Are you sure you want to continue? This action is Irreversible and will delete this site and all of your data.',
             () => {
