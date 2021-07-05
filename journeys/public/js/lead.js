@@ -1,8 +1,7 @@
 var InstaSummary, InstaBasic;
 var html;
-function switchtab(){
+function switchtab() {
     let id = $(this).attr("id");
-    console.log("Here got ID");
 }
 function get_details_by_cin(cin, reference_docname, rsync = false) {
     frappe.call({
@@ -12,7 +11,7 @@ function get_details_by_cin(cin, reference_docname, rsync = false) {
             "reference_docname": reference_docname,
             "reference_doctype": "Lead",
             "rsync": rsync,
-            "request_for":"Summary"
+            "request_for": "Summary"
         },
         // disable the button until the request is completed
         btn: $('.primary-action'),
@@ -32,7 +31,7 @@ function get_details_by_cin(cin, reference_docname, rsync = false) {
                     }
                     InstaSummary = InstaSummaryResponse["InstaSummary"];
                     getCalculatedFields();
-                    html = '<div class="col-xs-12 text-right"><span>Last Updated On: ' + frappe.format(r.message.modified, { fieldtype: 'Date' }) + ' </span><button class="btn btn-xs btn-primary resync-summary" data-cin="'+cin+'" data-reference_docname="'+reference_docname+'">Update</button></div>';
+                    html = '<div class="col-xs-12 text-right"><span>Last Updated On: ' + frappe.format(r.message.modified, { fieldtype: 'Date' }) + ' </span><button class="btn btn-xs btn-primary resync-summary" data-cin="' + cin + '" data-reference_docname="' + reference_docname + '">Update</button></div>';
                     basicInformation();
                     summaryFinancialStatements();
                     ratingsLast12Months();
@@ -57,13 +56,14 @@ function get_details_by_cin(cin, reference_docname, rsync = false) {
                             }*/
                     });
                     d.fields_dict.finrich_summary.$wrapper.html(html);
-                    d.$wrapper.find('.modal-dialog').css({ "width": "max-content", "font-size": "11px" });
-                    d.$wrapper.find('.resync-summary').off('click').on('click',function(){
+                    d.$wrapper.find('.modal-dialog').css({ "max-width": "max-content", "margin-inline": "10rem", "font-size": "11px" });
+                    d.$wrapper.find('.table').css({ "margin": "20px 0px", "border-radius": "9px", "width": "max-content", "max-width": "100%", "box-shadow": "0 0.05rem 0.2rem rgb(0 0 0 / 50%)" });
+                    d.$wrapper.find('.resync-summary').off('click').on('click', function () {
                         d.hide();
                         let reference_docname = $(this).data('reference_docname');
                         let cin = $(this).data('cin');
-                        get_details_by_cin(cin,reference_docname,true);
-                        
+                        get_details_by_cin(cin, reference_docname, true);
+
                     });
                     d.show();
                 }
@@ -80,7 +80,7 @@ function get_basic_details_by_cin(cin, reference_docname, rsync = false) {
             "reference_docname": reference_docname,
             "reference_doctype": "Lead",
             "rsync": rsync,
-            "request_for":"Basic"
+            "request_for": "Basic"
         },
         // disable the button until the request is completed
         btn: $('.primary-action'),
@@ -95,43 +95,47 @@ function get_basic_details_by_cin(cin, reference_docname, rsync = false) {
                 } else {
                     try {
                         let InstaSummaryResponse = (JSON.parse(r.message.request_data));
-                    if (r.message.status == "Error" || (InstaSummaryResponse.Status && InstaSummaryResponse.Status == "error")) {
-                        frappe.throw(InstaSummaryResponse.Type)
-                        return false;
-                    }
-                    InstaBasic = InstaSummaryResponse["InstaBasic"];
-                    getCalculatedFieldsBasic();
-                    html = "";
-                    basicInformationBasic();
-                    summaryFinancialStatementsBasic();
-                    ratingsLast12MonthsBasic();
-                    openChargesBasic();
-                    establishmentBasic();
-                    currentDirectorsBasic();
-                    directorsInfoAndOtherDirectorshipsBasic();
-                    let d = new frappe.ui.Dialog({
-                        title: InstaSummaryResponse.InstaBasic.CompanyMasterSummary.CompanyName,
-                        indicator: "green",
-                        fields: [
-                            {
-                                label: 'Search Result',
-                                fieldname: 'finrich_basic',
-                                fieldtype: 'HTML'
-                            }
-                        ]
-                        /*primary_action_label:"Print",
-                            primary_action(values){
-                            let html = d.fields_dict.finrich_summary.$wrapper.html();
-                            frappe.render_pdf(html);
-                            }*/
-                    });
-                    d.fields_dict.finrich_basic.$wrapper.html(html);
-                    d.$wrapper.find('.modal-dialog').css({ "width": "max-content", "font-size": "11px" });
-                    d.show();    
+                        if (r.message.status == "Error" || (InstaSummaryResponse.Status && InstaSummaryResponse.Status == "error")) {
+                            frappe.throw(InstaSummaryResponse.Type)
+                            return false;
+                        }
+                        InstaBasic = InstaSummaryResponse["InstaBasic"];
+                        getCalculatedFieldsBasic();
+                        html = "";
+                        basicInformationBasic();
+                        summaryFinancialStatementsBasic();
+                        ratingsLast12MonthsBasic();
+                        openChargesBasic();
+                        establishmentBasic();
+                        currentDirectorsBasic();
+                        directorsInfoAndOtherDirectorshipsBasic();
+                        let d = new frappe.ui.Dialog({
+                            title: InstaSummaryResponse.InstaBasic.CompanyMasterSummary.CompanyName,
+                            indicator: "green",
+                            fields: [
+                                {
+                                    label: 'Search Result',
+                                    fieldname: 'finrich_basic',
+                                    fieldtype: 'HTML'
+                                }
+                            ]
+                            /*primary_action_label:"Print",
+                                primary_action(values){
+                                let html = d.fields_dict.finrich_summary.$wrapper.html();
+                                frappe.render_pdf(html);
+                                }*/
+                        });
+                        d.fields_dict.finrich_basic.$wrapper.html(html);
+                        d.$wrapper.find('.modal-dialog').css({ "max-width": "max-content", "margin-inline": "10rem", "font-size": "11px" });
+                        d.$wrapper.find('.table').css({ "margin": "20px 0px", "border-radius": "9px", "width": "max-content", "max-width": "100%", "box-shadow": "0 0.05rem 0.2rem rgb(0 0 0 / 50%)" });
+                        d.show();
+                        d.show();
+                        d.show();
+                        d.show();
+                        d.show();
                     } catch (error) {
-                        console.log(error);
                     }
-                    
+
                 }
             }
         }
@@ -288,7 +292,7 @@ function getFormattedValue(value, type, formatter_option = {}) {
 function getCalculatedFields() {
     try {
         InstaSummary["CompanyMasterSummary"]["Age"] = calculateAge();
-        InstaSummary["CompanyMasterSummary"]["Directors"] = "Current: " + InstaSummary["DirectorSignatoryMasterSummary"]["DirectorCurrentDirectorshipMasterSummary"]["Director"].length + " Directors (Past: " + InstaSummary["DirectorSignatoryMasterSummary"]["DirectorPastDirectorshipMasterSummary"]["Director"].length + " Directors)";
+        InstaSummary["CompanyMasterSummary"]["Directors"] = `Current: ${InstaSummary["DirectorSignatoryMasterSummary"]["DirectorCurrentDirectorshipMasterSummary"]["Director"].length} Directors ${typeof InstaSummary["DirectorSignatoryMasterSummary"]["DirectorPastDirectorshipMasterSummary"] !== 'undefined' ? `(Past: ${InstaSummary["DirectorSignatoryMasterSummary"]["DirectorPastDirectorshipMasterSummary"]["Director"].length} Directors)` : ''}`;
         InstaSummary["CompanyMasterSummary"]["OpenCharges"] = calculateOpenCharges();
         let signatoryCount = (typeof InstaSummary.DirectorSignatoryMasterSummary !== "undefined" && typeof InstaSummary.DirectorSignatoryMasterSummary.SignatoryCurrentMasterSummary !== "undefined" && typeof InstaSummary.DirectorSignatoryMasterSummary.SignatoryCurrentMasterSummary.Signatory !== 'undefined') ? (Array.isArray(InstaSummary["DirectorSignatoryMasterSummary"]["SignatoryCurrentMasterSummary"]["Signatory"]) ? InstaSummary["DirectorSignatoryMasterSummary"]["SignatoryCurrentMasterSummary"]["Signatory"].length : 1) : 0;
 
@@ -296,7 +300,6 @@ function getCalculatedFields() {
         InstaSummary["CompanyMasterSummary"]["ProfitAfterTax"] = formatCurrency(InstaSummary["FinancialsSummary"]["FinancialsYearWise"][0]["ProfitAfterTax"])
         InstaSummary["CompanyMasterSummary"]["EmployeesAndLocations"] = getEmployeeCountAndLocations();
     } catch (e) {
-        console.log(e);
     }
     return InstaSummary;
 }
@@ -306,7 +309,7 @@ function getEmployeeCountAndLocations() {
     let locations = (typeof InstaSummary.EmployeeAndEstablishmentSummary !== 'undefined' && typeof InstaSummary.EmployeeAndEstablishmentSummary.EstablishmentMaster !== 'undefined' && typeof InstaSummary.EmployeeAndEstablishmentSummary.EstablishmentMaster.Establishment !== 'undefined') ? InstaSummary["EmployeeAndEstablishmentSummary"]["EstablishmentMaster"]["Establishment"].length : "NA";
     let outputString = "";
     if (employees != "NA" && locations != "NA") {
-        outputString = employees + " employees & " + locations + " Locations";
+        outputString = `${employees > 0 ? `${employees} employee${employees > 1 ? 's' : ''}` : ''}${employees > 0 && locations > 0 ? ' & ' : ''}${locations > 0 ? `${locations} Location${locations > 1 ? 's' : ''}` : ''}`;
     } else if (employees != "NA") {
         outputString = employees + " employees";
     } else if (locations != "NA") {
@@ -328,7 +331,7 @@ function calculateOpenCharges() {
 
 function getDateDiffInYear(dateString, endDate = "", precision = 0) {
     let today = new Date();
-    if (endDate == "") {
+    if (endDate !== "") {
         let endYear = endDate.substring(6, 10);
         let endMonth = endDate.substring(3, 5);
         let endDay = endDate.substring(0, 2);
@@ -756,11 +759,11 @@ function directorsInfoAndOtherDirectorships() {
 /** Basic Insta Summary */
 function getCalculatedFieldsBasic() {
     InstaBasic["CompanyMasterSummary"]["Age"] = calculateAge(InstaBasic.CompanyMasterSummary.CompanyDateOfInc);
-    let curerntDirectorCount = (typeof InstaBasic.DirectorSignatoryMasterBasic!=="undefined" && typeof InstaBasic.DirectorSignatoryMasterBasic.Director!=="undefined")?InstaBasic["DirectorSignatoryMasterBasic"]["DirectorCurrentMasterBasic"]["Director"].length:0;
-    let pastDirectorCount = (typeof InstaBasic.DirectorSignatoryMasterBasic!=="undefined" && typeof InstaBasic.DirectorSignatoryMasterBasic.Director!=="undefined")?InstaBasic["DirectorSignatoryMasterBasic"]["DirectorPastMasterBasic"]["Director"].length:0;
+    let curerntDirectorCount = (typeof InstaBasic.DirectorSignatoryMasterBasic !== "undefined" && typeof InstaBasic.DirectorSignatoryMasterBasic.Director !== "undefined") ? InstaBasic["DirectorSignatoryMasterBasic"]["DirectorCurrentMasterBasic"]["Director"].length : 0;
+    let pastDirectorCount = (typeof InstaBasic.DirectorSignatoryMasterBasic !== "undefined" && typeof InstaBasic.DirectorSignatoryMasterBasic.Director !== "undefined") ? InstaBasic["DirectorSignatoryMasterBasic"]["DirectorPastMasterBasic"]["Director"].length : 0;
     InstaBasic["CompanyMasterSummary"]["Directors"] = "Current: " + curerntDirectorCount + " Directors (Past: " + pastDirectorCount + " Directors)";
     InstaBasic["CompanyMasterSummary"]["OpenCharges"] = calculateOpenChargesBasic();
-    let signatoryCount = ((typeof InstaBasic.DirectorSignatoryMasterBasic!=='undefined') && (typeof InstaBasic.DirectorSignatoryMasterBasic.SignatoryCurrentMasterBasic!=='undefined') && (typeof InstaBasic.DirectorSignatoryMasterBasic.SignatoryCurrentMasterBasic.Signatory!=='undefined'))?(InstaBasic["DirectorSignatoryMasterBasic"]["SignatoryCurrentMasterBasic"]["Signatory"].length):0;
+    let signatoryCount = ((typeof InstaBasic.DirectorSignatoryMasterBasic !== 'undefined') && (typeof InstaBasic.DirectorSignatoryMasterBasic.SignatoryCurrentMasterBasic !== 'undefined') && (typeof InstaBasic.DirectorSignatoryMasterBasic.SignatoryCurrentMasterBasic.Signatory !== 'undefined')) ? (InstaBasic["DirectorSignatoryMasterBasic"]["SignatoryCurrentMasterBasic"]["Signatory"].length) : 0;
     InstaBasic["CompanyMasterSummary"]["Signatories"] = (signatoryCount > 1) ? signatoryCount + " Signatory" : signatoryCount + " Signatories";
     return InstaBasic;
 }
@@ -1120,10 +1123,9 @@ function directorsInfoAndOtherDirectorshipsBasic() {
     html += generateTableByFieldSchema(schema, formattedData);
 }
 
-var make_digital_footprint = function(digital_data) {
+var make_digital_footprint = function (digital_data) {
     digital_data = JSON.parse(digital_data.request_data);
     digital_data = JSON.parse(digital_data);
-    console.log(digital_data);
     var digital_original_html = "<!doctype html>\
         <html>\
         <head>\
@@ -1134,16 +1136,21 @@ var make_digital_footprint = function(digital_data) {
             border:none !important;\
         }\
         </style>\
+        <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.15.3/css/all.css' integrity='sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk' crossorigin='anonymous'>\
         </head>\
         <body>\
-        <div class='final_html'>\
+        <div class=' row final_html'>\
+        <div class='col-3'>\
         <nav>\
-        <div class='nav nav-pills' id='nav-tab' role='tablist' id='nav-tabContent'>\
+        <div class='nav nav-pills nav-fill flex-column' id='nav-tab' role='tablist' id='nav-tabContent'>\
           {{persontab}}\
         </div>\
         </nav>\
+        </div>\
+        <div class='col-9'>\
         <div class='tab-content'>\
         {{main_html}}\
+        </div>\
         </div>\
         </div>\
         </body>\
@@ -1151,7 +1158,6 @@ var make_digital_footprint = function(digital_data) {
         ";
 
     if (digital_data['@http_status_code'] == 200 && digital_data['@persons_count'] > 0) {
-        console.log("in here")
         var persons_count = digital_data['@persons_count'];
         //console.log(digital_data['person'].length)
         var tab_id = "person_id";
@@ -1169,14 +1175,13 @@ var make_digital_footprint = function(digital_data) {
             let person_field = "";
 
             let person_job_display_sidebar = "NA";
-            let person_image = '<div class="sidebar-standard-image"> <div class="standard-image" style="background-color: rgb(250, 251, 252);">NA</div> </div>';
+            let person_image = ''//'<div class="sidebar-standard-image"> <div class="standard-image" style="background-color: rgb(250, 251, 252);"></div> </div>';
             let person_job = "";
             let person_address = "";
             let person_phones = "";
             let person_education = "";
-            let person_ralationships = "";
+            let person_relationships = "";
             if ("person" in digital_data) {
-                console.log(digital_data);
                 person_field = "person";
                 if ("names" in digital_data[person_field]) {
                     person_name = digital_data[person_field].names[0].display;
@@ -1185,7 +1190,7 @@ var make_digital_footprint = function(digital_data) {
                 }
 
                 if ("dob" in digital_data[person_field]) {
-                    if (typeof(digital_data[person_field].dob) != "undefined") {
+                    if (typeof (digital_data[person_field].dob) != "undefined") {
                         person_dob = digital_data[person_field].dob.display;
                     } else {
                         person_dob = digital_data[person_field].dob.display;
@@ -1196,14 +1201,14 @@ var make_digital_footprint = function(digital_data) {
                 }
 
                 if ("gender" in digital_data[person_field]) {
-                    if (typeof(digital_data[person_field].gender) != "undefined") {
+                    if (typeof (digital_data[person_field].gender) != "undefined") {
                         person_gender = digital_data[person_field].gender.content;
-                        person_gender = person_gender.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+                        person_gender = person_gender.toLowerCase().replace(/\b[a-z]/g, function (letter) {
                             return letter.toUpperCase();
                         });
                     } else {
                         person_gender = digital_data[person_field].gender.content;
-                        person_gender = person_gender.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+                        person_gender = person_gender.toLowerCase().replace(/\b[a-z]/g, function (letter) {
                             return letter.toUpperCase();
                         });
 
@@ -1214,7 +1219,7 @@ var make_digital_footprint = function(digital_data) {
                 }
 
                 if ("languages" in digital_data[person_field]) {
-                    person_lang = Array.prototype.map.call(digital_data[person_field].languages, function(item) {
+                    person_lang = Array.prototype.map.call(digital_data[person_field].languages, function (item) {
                         return item.display;
                     }).join(",");
                 } else {
@@ -1234,16 +1239,22 @@ var make_digital_footprint = function(digital_data) {
                         let person_job_title = digital_data[person_field].jobs[j].title;
                         let person_job_org = digital_data[person_field].jobs[j].organization;
                         let person_job_display = digital_data[person_field].jobs[j].display;
-                        person_job = person_job + "<div class='col-sm-4'>\
-                                            <h6 align='center'>\
-                                                " + person_job_title + "\
-                                            </h6>\
-                                            <p style='font-size:14px; text-align:center; line-height:14px; color:#8d99a6'>\
-                                                " + person_job_org + "\
+                        person_job = person_job + "<div class='col-sm-10'>\
+                                            <p style='margin-bottom:0px;'>\
+                                                <i class='fas fa-user-tie'></i>\
+                                                <span align='center' style='width:50%; font-size:unset;'>\
+                                                    " + person_job_title + "\
+                                                </span>\
                                             </p>\
-                                            <p style='font-size:14px; text-align:center; line-height:14px; color:#8d99a6'>\
+                                            <p>\
+                                                <span style='font-size:12px; width:50%; display:inline; text-align:center; line-height:14px; color:#8d99a6'>\
+                                                    " + person_job_org + "\
+                                                </span>\
+                                            </p>\
+                                            <p style='font-size:12px; line-height:14px; color:#8d99a6'>\
                                                 " + person_job_display + "\
                                             </p>\
+                                            <hr style='margin-top: 0px;'>\
                                         </div>";
                     }
                 } else {
@@ -1255,10 +1266,12 @@ var make_digital_footprint = function(digital_data) {
                     let len = (digital_data[person_field].addresses.length)
                     for (let j = 0; j < len; j++) {
                         let person_addr_display = digital_data[person_field].addresses[j].display;
-                        person_address = person_address + "<div class='col-sm-4'>\
-                                            <p style='font-size:14px; text-align:center; line-height:14px; color:#8d99a6'>\
+                        person_address = person_address + "<div class='col-sm-10'>\
+                                            <i class='fas fa-map-marker-alt'></i>\
+                                            <p style='font-size:12px; text-align:start; line-height:14px; color:#8d99a6; display:inline;'>\
                                                 " + person_addr_display + "\
                                             </p>\
+                                            <hr style='margin-top: 0px;'>\
                                         </div>";
                     }
                 } else {
@@ -1270,10 +1283,12 @@ var make_digital_footprint = function(digital_data) {
                     let len = (digital_data[person_field].phones.length)
                     for (let j = 0; j < len; j++) {
                         let person_phones_display = digital_data[person_field].phones[j].display_international;
-                        person_phones = person_phones + "<div class='col-sm-4'>\
-                                            <p style='font-size:14px; text-align:center; line-height:14px; color:#8d99a6'>\
+                        person_phones = person_phones + "<div class='col-sm-12'>\
+                                            <i class='fas fa-phone-alt'></i>\
+                                            <p style='font-size:12px; text-align:center; line-height:14px; color:#8d99a6; display:inline;'>\
                                                 " + person_phones_display + "\
                                             </p>\
+                                            <hr style='margin-top: 0px;'>\
                                         </div>";
                     }
                 } else {
@@ -1285,10 +1300,12 @@ var make_digital_footprint = function(digital_data) {
                     let len = (digital_data[person_field].educations.length)
                     for (let j = 0; j < len; j++) {
                         let person_education_display = digital_data[person_field].educations[j].display;
-                        person_education = person_education + "<div class='col-sm-4'>\
-                                            <p style='font-size:14px; text-align:center; line-height:14px; color:#8d99a6'>\
+                        person_education = person_education + "<div class='col-sm-12'>\
+                                            <i class='fas fa-graduation-cap'></i>\
+                                            <p style='font-size:12px; text-align:center; line-height:14px; color:#8d99a6; display:inline;'>\
                                                 " + person_education_display + "\
                                             </p>\
+                                            <hr style='margin-top: 0px;'>\
                                         </div>";
                     }
                 } else {
@@ -1299,15 +1316,17 @@ var make_digital_footprint = function(digital_data) {
                 if ("relationships" in digital_data[person_field]) {
                     let len = (digital_data[person_field].relationships.length)
                     for (let j = 0; j < len; j++) {
-                        let person_ralationships_display = digital_data[person_field].relationships[j].names[0].display;
-                        person_ralationships = person_ralationships + "<div class='col-sm-4'>\
-                                            <p style='font-size:14px; text-align:center; line-height:14px; color:#8d99a6'>\
-                                                " + person_ralationships_display + "\
+                        let person_relationships_display = digital_data[person_field].relationships[j].names[0].display;
+                        person_relationships = person_relationships + "<div class='col-sm-12'>\
+                                            <i class='fas fa-user-friends'></i>\
+                                            <p style='font-size:12px; display:inline; line-height:14px; color:#8d99a6'>\
+                                                " + person_relationships_display + "\
                                             </p>\
+                                            <hr style='margin-top: 0px;'>\
                                         </div>";
                     }
                 } else {
-                    person_ralationships = "NA"
+                    person_relationships = "NA"
                 }
 
                 //let person_image='<div class="sidebar-standard-image"> <div class="standard-image" style="background-color: rgb(250, 251, 252);">NA</div> </div>';
@@ -1323,7 +1342,7 @@ var make_digital_footprint = function(digital_data) {
                         })
                         if (http.status == 200 || http.status == 0) {
                             //console.log("status success",http.status)
-                            person_image = '<img itemprop="image" class="img-responsive img-thumbnail sidebar-image" style="min-height:100%; min-width:100%;" src="' + testUrl + '">';
+                            person_image = '<img itemprop="image" class="img-responsive img-thumbnail sidebar-image" style="width:100%; border-radius:9px;" src="' + testUrl + '">';
                             break;
                         }
 
@@ -1340,7 +1359,7 @@ var make_digital_footprint = function(digital_data) {
                 }
 
                 if ("dob" in digital_data[person_field][i]) {
-                    if (typeof(digital_data[person_field][i].dob) != "undefined") {
+                    if (typeof (digital_data[person_field][i].dob) != "undefined") {
                         person_dob = digital_data[person_field][i].dob.display;
                     } else {
                         person_dob = digital_data[person_field][i].dob.display;
@@ -1351,14 +1370,14 @@ var make_digital_footprint = function(digital_data) {
                 }
 
                 if ("gender" in digital_data["possible_persons"][i]) {
-                    if (typeof(digital_data["possible_persons"][i].gender) != "undefined") {
+                    if (typeof (digital_data["possible_persons"][i].gender) != "undefined") {
                         person_gender = digital_data["possible_persons"][i].gender.content;
-                        person_gender = person_gender.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+                        person_gender = person_gender.toLowerCase().replace(/\b[a-z]/g, function (letter) {
                             return letter.toUpperCase();
                         });
                     } else {
                         person_gender = digital_data["possible_persons"][i].gender.content;
-                        person_gender = person_gender.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+                        person_gender = person_gender.toLowerCase().replace(/\b[a-z]/g, function (letter) {
                             return letter.toUpperCase();
                         });
 
@@ -1368,7 +1387,7 @@ var make_digital_footprint = function(digital_data) {
                     person_gender = "NA"
                 }
                 if ("languages" in digital_data["possible_persons"][i]) {
-                    person_lang = Array.prototype.map.call(digital_data["possible_persons"][i].languages, function(item) {
+                    person_lang = Array.prototype.map.call(digital_data["possible_persons"][i].languages, function (item) {
                         return item.display;
                     }).join(",");
                 } else {
@@ -1384,19 +1403,25 @@ var make_digital_footprint = function(digital_data) {
                         } else {
 
                         }
-                        let person_job_title = digital_data["possible_persons"][i].jobs[j].title;
-                        let person_job_org = digital_data["possible_persons"][i].jobs[j].organization;
-                        let person_job_display = digital_data["possible_persons"][i].jobs[j].display;
-                        person_job = person_job + "<div class='col-sm-4'>\
-                                            <h6 align='center'>\
-                                                " + person_job_title + "\
-                                            </h6>\
-                                            <p style='font-size:14px; text-align:center; line-height:14px; color:#8d99a6'>\
-                                                " + person_job_org + "\
+                        let person_job_title = typeof digital_data["possible_persons"][i].jobs[j].title !== 'undefined' ? digital_data["possible_persons"][i].jobs[j].title : '';
+                        let person_job_org = typeof digital_data["possible_persons"][i].jobs[j].organization !== 'undefined' ? digital_data["possible_persons"][i].jobs[j].organization : '';
+                        let person_job_display = typeof digital_data["possible_persons"][i].jobs[j].display !== 'undefined' ? digital_data["possible_persons"][i].jobs[j].display : '';
+                        person_job = person_job + "<div class='col-sm-10'>\
+                                            <p style='margin-bottom:0px;'>\
+                                                <i class='fas fa-user-tie'></i>\
+                                                <span align='center' style='width:50%; font-size:unset;'>\
+                                                    " + person_job_title + "\
+                                                </span>\
                                             </p>\
-                                            <p style='font-size:14px; text-align:center; line-height:14px; color:#8d99a6'>\
+                                            <p>\
+                                                <span style='font-size:12px; width:50%; display:inline; text-align:center; line-height:14px; color:#8d99a6'>\
+                                                    " + person_job_org + "\
+                                                </span>\
+                                            </p>\
+                                            <p style='font-size:12px; line-height:14px; color:#8d99a6'>\
                                                 " + person_job_display + "\
                                             </p>\
+                                            <hr style='margin-top: 0px;'>\
                                         </div>";
                     }
                 } else {
@@ -1408,10 +1433,12 @@ var make_digital_footprint = function(digital_data) {
                     let len = (digital_data["possible_persons"][i].addresses.length)
                     for (let j = 0; j < len; j++) {
                         let person_addr_display = digital_data["possible_persons"][i].addresses[j].display;
-                        person_address = person_address + "<div class='col-sm-4'>\
-                                            <p style='font-size:14px; text-align:center; line-height:14px; color:#8d99a6'>\
+                        person_address = person_address + "<div class='col-sm-10'>\
+                                            <i class='fas fa-map-marker-alt'></i>\
+                                            <p style='font-size:12px; text-align:start; line-height:14px; color:#8d99a6; display:inline;'>\
                                                 " + person_addr_display + "\
                                             </p>\
+                                            <hr style='margin-top: 0px;'>\
                                         </div>";
                     }
                 } else {
@@ -1423,10 +1450,12 @@ var make_digital_footprint = function(digital_data) {
                     let len = (digital_data["possible_persons"][i].phones.length)
                     for (let j = 0; j < len; j++) {
                         let person_phones_display = digital_data["possible_persons"][i].phones[j].display_international;
-                        person_phones = person_phones + "<div class='col-sm-4'>\
-                                            <p style='font-size:14px; text-align:center; line-height:14px; color:#8d99a6'>\
+                        person_phones = person_phones + "<div class='col-sm-12'>\
+                                            <i class='fas fa-phone-alt'></i>\
+                                            <p style='font-size:12px; text-align:center; line-height:14px; color:#8d99a6; display:inline;'>\
                                                 " + person_phones_display + "\
                                             </p>\
+                                            <hr style='margin-top: 0px;'>\
                                         </div>";
                     }
                 } else {
@@ -1438,29 +1467,33 @@ var make_digital_footprint = function(digital_data) {
                     let len = (digital_data["possible_persons"][i].educations.length)
                     for (let j = 0; j < len; j++) {
                         let person_education_display = digital_data["possible_persons"][i].educations[j].display;
-                        person_education = person_education + "<div class='col-sm-4'>\
-                                            <p style='font-size:14px; text-align:center; line-height:14px; color:#8d99a6'>\
+                        person_education = person_education + "<div class='col-sm-12'>\
+                                            <i class='fas fa-graduation-cap'></i>\
+                                            <p style='font-size:12px; text-align:center; line-height:14px; color:#8d99a6; display:inline;'>\
                                                 " + person_education_display + "\
                                             </p>\
+                                            <hr style='margin-top: 0px;'>\
                                         </div>";
                     }
                 } else {
                     person_education = "NA"
                 }
 
-                // let person_ralationships=""
+                // let person_relationships=""
                 if ("relationships" in digital_data["possible_persons"][i]) {
                     let len = (digital_data["possible_persons"][i].relationships.length)
                     for (let j = 0; j < len; j++) {
-                        let person_ralationships_display = digital_data["possible_persons"][i].relationships[j].names[0].display;
-                        person_ralationships = person_ralationships + "<div class='col-sm-4'>\
-                                            <p style='font-size:14px; text-align:center; line-height:14px; color:#8d99a6'>\
-                                                " + person_ralationships_display + "\
+                        let person_relationships_display = digital_data["possible_persons"][i].relationships[j].names[0].display;
+                        person_relationships = person_relationships + "<div class='col-sm-12'>\
+                                            <i class='fas fa-user-friends'></i>\
+                                            <p style='font-size:12px; display:inline; line-height:14px; color:#8d99a6'>\
+                                                " + person_relationships_display + "\
                                             </p>\
+                                            <hr style='margin-top: 0px;'>\
                                         </div>";
                     }
                 } else {
-                    person_ralationships = "NA"
+                    person_relationships = "NA"
                 }
 
 
@@ -1476,7 +1509,7 @@ var make_digital_footprint = function(digital_data) {
                         })
                         if (http.status == 200 || http.status == 0) {
                             //console.log("status success",http.status)
-                            person_image = '<img itemprop="image" class="img-responsive img-thumbnail sidebar-image" style="min-height:100%; min-width:100%;" src="' + testUrl + '">';
+                            person_image = '<img itemprop="image" class="img-responsive img-thumbnail sidebar-image" style="width:100%; border-radius:9px" src="' + testUrl + '">';
                             break;
                         }
 
@@ -1490,139 +1523,102 @@ var make_digital_footprint = function(digital_data) {
 
 
             if (i == 0) {
-                tab_html = tab_html +'<a class="nav-item nav-link active" id="'+tab_id+'-tab" data-toggle="tab" role="tab" >'+person_name+'</a>';
+                tab_html = tab_html + '<a class="nav-item nav-link active" id="' + tab_id + '-tab" data-toggle="tab" role="tab" >' + person_name + '</a>';
                 //tab_html = tab_html + "<li class='active' ><a data-toggle='tab' href='#" + tab_id + "'>" + person_name + "</a></li>"
                 activetab = "active show"
             } else {
-                tab_html = tab_html +'<a class="nav-item nav-link" id="'+tab_id+'-tab" data-toggle="tab" role="tab" >'+person_name+'</a>';
+                tab_html = tab_html + '<a class="nav-item nav-link" id="' + tab_id + '-tab" data-toggle="tab" role="tab" >' + person_name + '</a>';
                 activetab = ""
             }
-            main_html = main_html + '<div class="tab-pane fade '+activetab+'" id="'+tab_id+'" role="tabpanel" >'+
-                "<div class='row' style='padding-top:20px;'>\
-                    <div class='col-sm-4'>\
-                        <div class='col-sm-12'>\
-                            <h5>\
-                                PROFESSIONAL DETAILS\
-                            </h5>\
-                            <hr>\
-                         <div class='profile-image'>\
-                            " + person_image + "\
-                         </div>\
-                         <p style='padding:10px; font-size:14px;'>\
-                            " + person_job_display_sidebar + "\
-                         </p>\
-                    </div>\
-                    </div>\
-                    <div class='col-sm-8'>\
-                        <div class='col-sm-12'>\
-                            <h5>\
-                                ABOUT ME\
-                            </h5>\
-                            <hr>\
-                    <div class='footprint-info'>\
-                            <table class='table borderless' style='font-size:14px; color:#8d99a6'>\
-                                <tr>\
-                                    <td>\
-                                        NAME\
-                                    </td>\
-                                    <td class=''>\
-                                        " + person_name + "\
-                                    </td>\
-                                    <td>\
-                                        AGE\
-                                    </td>\
-                                    <td class=''>\
-                                        " + person_dob + "\
-                                    </td>\
-                                </tr>\
-                                <tr>\
-                                     <td>\
-                                        GENDER\
-                             </td>\
-                                    <td>\
-                                        " + person_gender + "\
-                                    </td>\
-                                    <td>\
-                                        LANGAUGES\
-                                    </td>\
-                                    <td>\
-                                        " + person_lang + "\
-                                    </td>\
-                                </tr>\
-                            </table>\
-                         </div>\
-                        </div>\
-                        <br><br>\
-                        <div class='col-sm-12'>\
-                            <h5>\
-                                PHONES\
-                            </h5>\
-                             <hr>\
-                         <div class='row'>\
-                            <div class='col-sm-12'>\
-                            " + person_phones + "\
-                            </div>\
-                         </div>\
-                        </div>\
-                        <br><br>\
-                        <div class='col-sm-12'>\
-                            <h5>\
-                                ADDRESS\
-                            </h5>\
-                             <hr>\
-                         <div class='row'>\
-                            <div class='col-sm-12'>\
-                            " + person_address + "\
-                            </div>\
-                         </div>\
-                        </div>\
-                        <br><br>\
-                        <div class='col-sm-12'>\
-                            <h5>\
-                                EDUCATION\
-                            </h5>\
-                             <hr>\
-                         <div class='row'>\
-                            <div class='col-sm-12'>\
-                            " + person_education + "\
-                            </div>\
-                         </div>\
-                        </div>\
-                        <br><br>\
-                        <div class='col-sm-12'>\
-                            <h5>\
-                                RELATIONSHIPS\
-                            </h5>\
-                             <hr>\
-                         <div class='row'>\
-                            <div class='col-sm-12'>\
-                            " + person_ralationships + "\
-                            </div>\
-                         </div>\
-                        </div>\
-                        <br><br>\
-                        <div class='col-sm-12'>\
-                            <h5>\
-                                CURRENT JOBS\
-                            </h5>\
-                            <hr>\
-                             <div class='row'>\
-                               <div class='col-sm-12'>\
-                                " + person_job + "\
-                               </div>\
-                             </div>\
-                        </div>\
-                    </div>\
-                </div>\
-                </div>\
-                ";
+            main_html = main_html +
+                `<div class="tab-pane fade ${activetab} " id="${tab_id}" role="tabpanel">
+                <div class='row' style='padding-top:20px; margin-right:15px; border: 1px solid #8d99a6; border-radius: 12px; box-shadow: 0 0.05rem 0.2rem rgb(0 0 0 / 50%);'>
+                    <div class='col-sm-12'>
+                        <h5>
+                            <i class="fas fa-address-card"></i> PROFESSIONAL DETAILS
+                        </h5>
+                        <hr style='margin-top: 0px;'>
+                        <div class="row">
+                            ${person_image !== "" ? `<div class="col-4" style='margin-bottom: 5px;'>
+                                <div class='profile-image' style="margin-bottom:8px">
+                                    ${person_image}
+                                </div>
+                            </div>`: ''}
+                            <div class="col-8" style='margin-bottom: 5px;'>
+                            <p style='padding-top:10px; font-size:12px;'><i class="fas fa-user-tie"></i> ${person_name !== 'NA' ? person_name : '-'} ${person_dob !== 'NA' ? `(${person_dob})` : ''}</p>
+                            ${person_job_display_sidebar !== 'NA' ? `<p style='font-size:12px;'><i class="fas fa-briefcase"></i> ${person_job_display_sidebar}</p>` : ''}
+                            ${person_gender !== 'NA' ? `<p style='font-size:12px; color:#8d99a6;'>Gender: ${person_gender}</p>` : ''}
+                            ${person_lang !== 'NA' ? `<p style='padding-bottom:10px; font-size:12px; color:#8d99a6;'>Languages: ${person_lang}</p>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class='col-sm-8' style='margin-bottom: 5px;'>
+                        <h5>
+                            <i class="fas fa-map-marked-alt"></i> ADDRESS
+                        </h5>
+                        <hr style='margin-top: 0px;'>
+                        <div class='row'>
+                            ${person_address !== "NA" ? `<div class='col-sm-12'>
+                                                        ${person_address}
+                                                    </div>`: ''}
+                        </div>
+                    </div>
+                    <div class='col-sm-4' style='margin-bottom: 5px;'>
+                        <h5>
+                            <i class="fas fa-address-book"></i> PHONES
+                        </h5>
+                        <hr style='margin-top: 0px;'>
+                        <div class='row'>
+                            ${person_phones !== "NA" ? `<div class='col-sm-12'>
+                                                        ${person_phones}
+                                                    </div>`: ''}
+                        </div>
+                    </div>
+                    <div class='col-sm-7' style='margin-bottom: 5px;'>
+                        <h5>
+                            <i class="fas fa-building"></i> EXPERIENCE
+                        </h5>
+                        <hr style='margin-top: 0px;'>
+                        <div class='row'>
+                            ${person_job !== "NA" ? `<div class='col-sm-12'>
+                                                        ${person_job}
+                                                    </div>`: ''}
+                        </div>
+                    </div>
+                    <div class='col-sm-5'>
+                        <div class="row">
+                            <div class='col-sm-12' style='margin-bottom: 5px;'>
+                                <h5>
+                                    <i class="fas fa-user-graduate"></i> EDUCATION
+                                </h5>
+                                <hr style='margin-top: 0px;'>
+                                <div class='row'>
+                                    ${person_education !== "NA" ? `<div class='col-sm-12'>
+                                                                ${person_education}
+                                                            </div>`: ''}
+                                </div>
+                            </div>
+                            <div class='col-sm-12' style='margin-bottom: 5px;'>
+                                <h5>
+                                    <i class="fas fa-users"></i> CONNECTIONS
+                                </h5>
+                                <hr style='margin-top: 0px;'>
+                                <div class='row'>
+                                    ${person_relationships !== "NA" ? `<div class='col-sm-12'>
+                                                                    ${person_relationships}
+                                                                </div>`: ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
 
         }
 
         digital_original_html = digital_original_html.replace("{{persontab}}", tab_html);
 
         digital_original_html = digital_original_html.replace("{{main_html}}", main_html);
-        console.log(digital_original_html)
         return digital_original_html;
     } else {
         digital_original_html = "NA";
@@ -1630,7 +1626,7 @@ var make_digital_footprint = function(digital_data) {
     }
 }
 
-console.log("Here script Loaded");
+// console.log("Here script Loaded");
 frappe.ui.form.on('Lead', {
     refresh: function (frm) {
         let doc = frappe.db.get_doc('FinRich Settings');
@@ -1640,7 +1636,7 @@ frappe.ui.form.on('Lead', {
             }
             frm.add_custom_button(__('FinRich Plus'), function () {
                 let search_string;
-                if(frm.doc.cin){
+                if (frm.doc.cin) {
                     get_details_by_cin(frm.doc.cin, frm.doc.name);
                     return
                 }
@@ -1712,7 +1708,7 @@ frappe.ui.form.on('Lead', {
             }, __("Enrich Data"));
             frm.add_custom_button(__('FinRich'), function () {
                 let search_string;
-                if(frm.doc.cin){
+                if (frm.doc.cin) {
                     get_basic_details_by_cin(frm.doc.cin, frm.doc.name);
                     return
                 }
@@ -1765,7 +1761,8 @@ frappe.ui.form.on('Lead', {
                                         ]
                                     });
                                     d.fields_dict.company_list.$wrapper.html(html);
-                                    d.$wrapper.find('.modal-dialog').css("width", "600px");
+                                    d.$wrapper.find('.modal-dialog').css("width", "fit-content");
+                                    d.$wrapper.find('.table').css({ "margin": "20px 0px", "border-radius": "9px", "width": "max-content", "max-width": "100%", "box-shadow": "0 0.05rem 0.2rem rgb(0 0 0 / 50%)" });
                                     d.show();
                                     d.$wrapper.find('.cin-link').on('click', function () {
                                         let cin = $(this).data('cin');
@@ -1783,10 +1780,10 @@ frappe.ui.form.on('Lead', {
                 );
             }, __("Enrich Data"));
         });
-        
+
         let profile_enrich_settings = frappe.db.get_doc('Profile Enrich Settings');
-        profile_enrich_settings.then((profile_enrich_settings)=>{
-            if(profile_enrich_settings && !profile_enrich_settings.enable_profile_enrich){
+        profile_enrich_settings.then((profile_enrich_settings) => {
+            if (profile_enrich_settings && !profile_enrich_settings.enable_profile_enrich) {
                 return;
             }
 
@@ -1808,13 +1805,13 @@ frappe.ui.form.on('Lead', {
                     let email = values.email;
                     let mobile = values.mobile;
                     let search_obj = {};
-                    if(email && frm.doc.email_id){
+                    if (email && frm.doc.email_id) {
                         search_obj["email"] = frm.doc.email_id
                     }
-                    if(mobile && frm.doc.mobile_no){
+                    if (mobile && frm.doc.mobile_no) {
                         search_obj["mobile_no"] = frm.doc.mobile_no;
                     }
-                    if (Object.keys(search_obj).length === 0){
+                    if (Object.keys(search_obj).length === 0) {
                         frappe.throw("Please Update Mobile No or Email");
                         return;
                     }
@@ -1827,36 +1824,35 @@ frappe.ui.form.on('Lead', {
                         // freeze the screen until the request is completed
                         freeze: true,
                         callback: (r) => {
-                            console.log("IN output of console log");
                             if (r.message) {
-                                    let html = make_digital_footprint(r.message)
-                                    let d = new frappe.ui.Dialog({
-                                        title: 'Person Summary',
-                                        indicator: "green",
-                                        fields: [
-                                            {
-                                                label: 'Search Result',
-                                                fieldname: 'company_list',
-                                                fieldtype: 'HTML'
-                                            }
-                                        ]
+                                let html = make_digital_footprint(r.message)
+                                let d = new frappe.ui.Dialog({
+                                    title: 'Person Summary',
+                                    indicator: "green",
+                                    fields: [
+                                        {
+                                            label: 'Search Result',
+                                            fieldname: 'company_list',
+                                            fieldtype: 'HTML'
+                                        }
+                                    ]
+                                });
+                                d.fields_dict.company_list.$wrapper.html(html);
+                                d.$wrapper.find('.modal-dialog').css({ "width": "80%", "max-width": "80%" });
+                                d.show();
+                                d.$wrapper.find('.nav-link').on('click', function () {
+                                    let id = $(this).attr('id');
+                                    let areaid = id.substring(0, id.length - 4);
+                                    d.$wrapper.find(".tab-pane").each(function (key, ele) {
+                                        $(ele).removeClass('active');
+                                        $(ele).removeClass('show');
                                     });
-                                    d.fields_dict.company_list.$wrapper.html(html);
-                                    d.$wrapper.find('.modal-dialog').css("min-width", "800px");
-                                    d.show();
-                                    d.$wrapper.find('.nav-link').on('click',function(){
-                                        let id = $(this).attr('id');
-                                        let areaid =  id.substring(0, id.length - 4);
-                                        d.$wrapper.find(".tab-pane").each(function(key,ele){
-                                            $(ele).removeClass('active');
-                                            $(ele).removeClass('show');
-                                        });
-                                        d.$wrapper.find("#"+areaid).addClass("active show");
-                                    });
-                                }
+                                    d.$wrapper.find("#" + areaid).addClass("active show");
+                                });
                             }
-                            // on success
-                        
+                        }
+                        // on success
+
                     });
                 }
                 );
