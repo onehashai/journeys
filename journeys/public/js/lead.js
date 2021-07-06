@@ -95,39 +95,40 @@ function get_basic_details_by_cin(cin, reference_docname, rsync = false) {
                 } else {
                     try {
                         let InstaSummaryResponse = (JSON.parse(r.message.request_data));
-                    if (r.message.status == "Error" || (InstaSummaryResponse.Status && InstaSummaryResponse.Status == "error")) {
-                        frappe.throw(InstaSummaryResponse.Type)
-                        return false;
-                    }
-                    InstaBasic = InstaSummaryResponse["InstaBasic"];
-                    getCalculatedFieldsBasic();
-                    html = "";
-                    basicInformationBasic();
-                    summaryFinancialStatementsBasic();
-                    ratingsLast12MonthsBasic();
-                    openChargesBasic();
-                    establishmentBasic();
-                    currentDirectorsBasic();
-                    directorsInfoAndOtherDirectorshipsBasic();
-                    let d = new frappe.ui.Dialog({
-                        title: InstaSummaryResponse.InstaBasic.CompanyMasterSummary.CompanyName,
-                        indicator: "green",
-                        fields: [
-                            {
-                                label: 'Search Result',
-                                fieldname: 'finrich_basic',
-                                fieldtype: 'HTML'
-                            }
-                        ]
-                        /*primary_action_label:"Print",
-                            primary_action(values){
-                            let html = d.fields_dict.finrich_summary.$wrapper.html();
-                            frappe.render_pdf(html);
-                            }*/
-                    });
-                    d.fields_dict.finrich_basic.$wrapper.html(html);
-                    d.$wrapper.find('.modal-dialog').css({ "width": "max-content", "font-size": "11px" });
-                    d.show();    
+                        if (r.message.status == "Error" || (InstaSummaryResponse.Status && InstaSummaryResponse.Status == "error")) {
+                            frappe.throw(InstaSummaryResponse.Type)
+                            return false;
+                        }
+                        InstaBasic = InstaSummaryResponse["InstaBasic"];
+                        getCalculatedFieldsBasic();
+                        html = "";
+                        basicInformationBasic();
+                        summaryFinancialStatementsBasic();
+                        ratingsLast12MonthsBasic();
+                        openChargesBasic();
+                        establishmentBasic();
+                        currentDirectorsBasic();
+                        directorsInfoAndOtherDirectorshipsBasic();
+                        let d = new frappe.ui.Dialog({
+                            title: InstaSummaryResponse.InstaBasic.CompanyMasterSummary.CompanyName,
+                            indicator: "green",
+                            fields: [
+                                {
+                                    label: 'Search Result',
+                                    fieldname: 'finrich_basic',
+                                    fieldtype: 'HTML'
+                                }
+                            ]
+                            /*primary_action_label:"Print",
+                                primary_action(values){
+                                let html = d.fields_dict.finrich_summary.$wrapper.html();
+                                frappe.render_pdf(html);
+                                }*/
+                        });
+                        d.fields_dict.finrich_basic.$wrapper.html(html);
+                        d.$wrapper.find('.modal-dialog').css({ "max-width": "max-content", "margin-inline": "10rem", "font-size": "11px" });
+                        d.$wrapper.find('.table').css({ "margin": "20px 0px", "border-radius": "9px", "width": "max-content", "max-width": "100%", "box-shadow": "0 0.05rem 0.2rem rgb(0 0 0 / 50%)" });
+                        d.show();
                     } catch (error) {
                         console.log(error);
                     }
@@ -673,7 +674,7 @@ function currentDirectors() {
         }
         ]
     };
-    let potentialRelatedParty = (typeof InstaSummary.DirectorSignatoryMasterSummary !== 'undefined' && typeof InstaSummary.DirectorSignatoryMasterSummary.PotentialRelatedPartyMasterSummary != "undefined" && typeof InstaSummary.DirectorSignatoryMasterSummary.PotentialRelatedPartyMasterSummary.RelatedParty !== "undefined") ? InstaSummary["DirectorSignatoryMasterSummary"]["PotentialRelatedPartyMasterSummary"]["RelatedParty"] : [];
+    let potentialRelatedParty = (typeof InstaSummary.DirectorSignatoryMasterSummary !== 'undefined' && typeof InstaSummary.DirectorSignatoryMasterSummary.PotentialRelatedPartyMasterSummary !== "undefined" && typeof InstaSummary.DirectorSignatoryMasterSummary.PotentialRelatedPartyMasterSummary.RelatedParty !== "undefined") ? InstaSummary["DirectorSignatoryMasterSummary"]["PotentialRelatedPartyMasterSummary"]["RelatedParty"] : [];
     $.each(potentialRelatedParty, (key, value) => {
         value["CompanyAge"] = getDateDiffInYear(value.CompanyDateOfInc) + " Years";
         potentialRelatedParty[key] = value;
@@ -1048,7 +1049,7 @@ function currentDirectorsBasic() {
         }
         ]
     };
-    let potentialRelatedParty = (typeof InstaBasic.DirectorSignatoryMasterBasic !== 'undefined' && typeof InstaBasic.DirectorSignatoryMasterBasic.PotentialRelatedPartyMasterBasic != "undefined" && typeof InstaBasic.DirectorSignatoryMasterBasic.PotentialRelatedPartyMasterBasic.RelatedParty !== "undefined") ? InstaBasic["DirectorSignatoryMasterBasic"]["PotentialRelatedPartyMasterBasic"]["RelatedParty"] : [];
+    let potentialRelatedParty = (typeof InstaBasic.DirectorSignatoryMasterBasic !== 'undefined' && typeof InstaBasic.DirectorSignatoryMasterBasic.PotentialRelatedPartyMasterBasic !== "undefined" && typeof InstaBasic.DirectorSignatoryMasterBasic.PotentialRelatedPartyMasterBasic.RelatedParty !== "undefined") ? InstaBasic["DirectorSignatoryMasterBasic"]["PotentialRelatedPartyMasterBasic"]["RelatedParty"] : [];
     $.each(potentialRelatedParty, (key, value) => {
         value["CompanyAge"] = getDateDiffInYear(value.CompanyDateOfInc) + " Years";
         potentialRelatedParty[key] = value;
@@ -1153,7 +1154,6 @@ var make_digital_footprint = function(digital_data) {
     if (digital_data['@http_status_code'] == 200 && digital_data['@persons_count'] > 0) {
         console.log("in here")
         var persons_count = digital_data['@persons_count'];
-        //console.log(digital_data['person'].length)
         var tab_id = "person_id";
         var tab_html = "";
         var main_html = "";
@@ -1169,7 +1169,7 @@ var make_digital_footprint = function(digital_data) {
             let person_field = "";
 
             let person_job_display_sidebar = "NA";
-            let person_image = '<div class="sidebar-standard-image"> <div class="standard-image" style="background-color: rgb(250, 251, 252);">NA</div> </div>';
+            let person_image = '';
             let person_job = "";
             let person_address = "";
             let person_phones = "";
@@ -1185,7 +1185,7 @@ var make_digital_footprint = function(digital_data) {
                 }
 
                 if ("dob" in digital_data[person_field]) {
-                    if (typeof(digital_data[person_field].dob) != "undefined") {
+                    if (typeof (digital_data[person_field].dob) !== "undefined") {
                         person_dob = digital_data[person_field].dob.display;
                     } else {
                         person_dob = digital_data[person_field].dob.display;
@@ -1196,7 +1196,7 @@ var make_digital_footprint = function(digital_data) {
                 }
 
                 if ("gender" in digital_data[person_field]) {
-                    if (typeof(digital_data[person_field].gender) != "undefined") {
+                    if (typeof (digital_data[person_field].gender) !== "undefined") {
                         person_gender = digital_data[person_field].gender.content;
                         person_gender = person_gender.toLowerCase().replace(/\b[a-z]/g, function(letter) {
                             return letter.toUpperCase();
@@ -1222,7 +1222,6 @@ var make_digital_footprint = function(digital_data) {
                 }
 
 
-                //let person_job_display_sidebar="NA"
                 if ("jobs" in digital_data[person_field]) {
                     let len = (digital_data[person_field].jobs.length)
                     for (let j = 0; j < len; j++) {
@@ -1310,20 +1309,17 @@ var make_digital_footprint = function(digital_data) {
                     person_ralationships = "NA"
                 }
 
-                //let person_image='<div class="sidebar-standard-image"> <div class="standard-image" style="background-color: rgb(250, 251, 252);">NA</div> </div>';
                 if ("images" in digital_data[person_field]) {
                     let len = (digital_data[person_field].images.length)
                     for (let j = 0; j < len; j++) {
-                        let testUrl = digital_data[person_field].images[j].url;
-                        //console.log(testUrl)
+                        let imageUrl = digital_data[person_field].images[j].url;
                         var http = $.ajax({
                             type: "HEAD",
-                            url: testUrl,
+                            url: imageUrl,
                             async: false
                         })
                         if (http.status == 200 || http.status == 0) {
-                            //console.log("status success",http.status)
-                            person_image = '<img itemprop="image" class="img-responsive img-thumbnail sidebar-image" style="min-height:100%; min-width:100%;" src="' + testUrl + '">';
+                            person_image = '<img itemprop="image" class="img-responsive img-thumbnail sidebar-image" style="width:100%; border-radius:9px;" src="' + imageUrl + '">';
                             break;
                         }
 
@@ -1340,7 +1336,7 @@ var make_digital_footprint = function(digital_data) {
                 }
 
                 if ("dob" in digital_data[person_field][i]) {
-                    if (typeof(digital_data[person_field][i].dob) != "undefined") {
+                    if (typeof (digital_data[person_field][i].dob) !== "undefined") {
                         person_dob = digital_data[person_field][i].dob.display;
                     } else {
                         person_dob = digital_data[person_field][i].dob.display;
@@ -1351,7 +1347,7 @@ var make_digital_footprint = function(digital_data) {
                 }
 
                 if ("gender" in digital_data["possible_persons"][i]) {
-                    if (typeof(digital_data["possible_persons"][i].gender) != "undefined") {
+                    if (typeof (digital_data["possible_persons"][i].gender) !== "undefined") {
                         person_gender = digital_data["possible_persons"][i].gender.content;
                         person_gender = person_gender.toLowerCase().replace(/\b[a-z]/g, function(letter) {
                             return letter.toUpperCase();
@@ -1403,7 +1399,6 @@ var make_digital_footprint = function(digital_data) {
                     person_job = "NA"
                 }
 
-                // let person_address=""
                 if ("addresses" in digital_data["possible_persons"][i]) {
                     let len = (digital_data["possible_persons"][i].addresses.length)
                     for (let j = 0; j < len; j++) {
@@ -1418,7 +1413,6 @@ var make_digital_footprint = function(digital_data) {
                     person_address = "NA"
                 }
 
-                // let person_phones=""
                 if ("phones" in digital_data["possible_persons"][i]) {
                     let len = (digital_data["possible_persons"][i].phones.length)
                     for (let j = 0; j < len; j++) {
@@ -1433,7 +1427,6 @@ var make_digital_footprint = function(digital_data) {
                     person_phones = "NA"
                 }
 
-                // let person_education=""
                 if ("educations" in digital_data["possible_persons"][i]) {
                     let len = (digital_data["possible_persons"][i].educations.length)
                     for (let j = 0; j < len; j++) {
@@ -1448,7 +1441,6 @@ var make_digital_footprint = function(digital_data) {
                     person_education = "NA"
                 }
 
-                // let person_ralationships=""
                 if ("relationships" in digital_data["possible_persons"][i]) {
                     let len = (digital_data["possible_persons"][i].relationships.length)
                     for (let j = 0; j < len; j++) {
@@ -1467,16 +1459,14 @@ var make_digital_footprint = function(digital_data) {
                 if ("images" in digital_data["possible_persons"][i]) {
                     let len = (digital_data["possible_persons"][i].images.length)
                     for (let j = 0; j < len; j++) {
-                        let testUrl = digital_data["possible_persons"][i].images[j].url;
-                        //console.log(testUrl)
+                        let imageUrl = digital_data["possible_persons"][i].images[j].url;
                         var http = $.ajax({
                             type: "HEAD",
-                            url: testUrl,
+                            url: imageUrl,
                             async: false
                         })
                         if (http.status == 200 || http.status == 0) {
-                            //console.log("status success",http.status)
-                            person_image = '<img itemprop="image" class="img-responsive img-thumbnail sidebar-image" style="min-height:100%; min-width:100%;" src="' + testUrl + '">';
+                            person_image = '<img itemprop="image" class="img-responsive img-thumbnail sidebar-image" style="width:100%; border-radius:9px" src="' + imageUrl + '">';
                             break;
                         }
 
@@ -1486,12 +1476,8 @@ var make_digital_footprint = function(digital_data) {
 
             }
 
-
-
-
             if (i == 0) {
-                tab_html = tab_html +'<a class="nav-item nav-link active" id="'+tab_id+'-tab" data-toggle="tab" role="tab" >'+person_name+'</a>';
-                //tab_html = tab_html + "<li class='active' ><a data-toggle='tab' href='#" + tab_id + "'>" + person_name + "</a></li>"
+                tab_html = tab_html + '<a class="nav-item nav-link active" id="' + tab_id + '-tab" data-toggle="tab" role="tab" >' + person_name + '</a>';
                 activetab = "active show"
             } else {
                 tab_html = tab_html +'<a class="nav-item nav-link" id="'+tab_id+'-tab" data-toggle="tab" role="tab" >'+person_name+'</a>';
@@ -1630,7 +1616,6 @@ var make_digital_footprint = function(digital_data) {
     }
 }
 
-console.log("Here script Loaded");
 frappe.ui.form.on('Lead', {
     refresh: function (frm) {
         let doc = frappe.db.get_doc('FinRich Settings');
@@ -1658,10 +1643,8 @@ frappe.ui.form.on('Lead', {
                         args: {
                             company_name: search_string
                         },
-                        // disable the button until the request is completed
                         btn: $('.primary-action'),
                         freeze_message: "<h4>Please wait, retriving data</h4>",
-                        // freeze the screen until the request is completed
                         freeze: true,
                         callback: (r) => {
                             if (r.message) {
