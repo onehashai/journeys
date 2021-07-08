@@ -8,8 +8,8 @@ from frappe.model.document import Document
 import datetime
 import re
 from frappe.core.doctype.sms_settings.sms_settings import send_sms
-from frappe.utils import (getdate, cint, add_months, date_diff, add_days,
-	nowdate, get_datetime_str, cstr, get_datetime, now_datetime, format_datetime)
+from frappe.desk.doctype.notification_log.notification_log import enqueue_create_notification
+from frappe.utils import format_datetime
 
 class EventNotificationSettings(Document):
 	pass
@@ -17,9 +17,11 @@ class EventNotificationSettings(Document):
 
 def event_reminder():
     try:
-        system_notification_enabled = frappe.get_value("Event Notification Settings", "Event Notification Settings", "system_notification")
-        email_notification_enabled = frappe.get_value("Event Notification Settings", "Event Notification Settings", "email_notification")
-        if not system_notification_enabled and not email_notification_enabled:
+        event_notification = frappe.get_doc("Event Notification Settings", "Event Notification Settings")
+        system_notification_enabled = event_notification.system_notification
+        email_notification_enabled = event_notification.email_notification
+        sms_notification_enabled = event_notification.sms_notification
+        if not system_notification_enabled and not email_notification_enabled and not sms_notification_enabled:
             return
         events = frappe.get_all("Event", filters=[
                 ['starts_on', '<', frappe.utils.now_datetime()+datetime.timedelta(minutes=10)],
@@ -32,6 +34,7 @@ def event_reminder():
                 for participant in event_participants:
                     if participant.reference_doctype == "Lead":
                         lead = frappe.get_doc("Lead", participant.reference_docname)
+                        mob_user = frappe._dict()
                         if lead.contact_by:
                             mob_user = frappe.get_doc("User", lead.contact_by)
                             contact_number = []
@@ -61,6 +64,7 @@ def event_reminder():
 
                     elif participant.reference_doctype == "Opportunity":
                         opp = frappe.get_doc("Opportunity", participant.reference_docname)
+                        mob_user = frappe._dict()
                         if opp.contact_by:
                             mob_user = frappe.get_doc("User", opp.contact_by)
                             contact_number = []
@@ -87,8 +91,11 @@ def event_reminder():
         frappe.log_error(frappe.get_traceback())
         
 def trigger_notification(user= None, number = None, msg=None, party="external", emp = None, client = None):
-    system_notification_enabled = frappe.get_value("Event Notification Settings", "Event Notification Settings", "system_notification")
-    email_notification_enabled = frappe.get_value("Event Notification Settings", "Event Notification Settings", "email_notification")
+    event_notification = frappe.get_doc("Event Notification Settings", "Event Notification Settings")
+    system_notification_enabled = event_notification.system_notification
+    email_notification_enabled = event_notification.email_notification
+    sms_notification_enabled = event_notification.sms_notification
+    notify_customers = event_notification.notify_customers
     msg = msg.as_dict()
     msg["starts_on"] = format_datetime(msg["starts_on"], 'hh:mm a')
     msg["emp"] = emp if emp else None
@@ -97,6 +104,15 @@ def trigger_notification(user= None, number = None, msg=None, party="external", 
         if user:
             if system_notification_enabled:
                 frappe.publish_realtime(event='msgprint',message="Hi {}, you have an upcoming event at {} with {}.".format(msg["emp"], msg["starts_on"], msg["client"]),user=user)
+                notification_doc = {
+                            'type': 'Alert',
+                            'document_type': msg.event_participants[0].reference_doctype,
+                            'document_name': msg.event_participants[0].reference_docname,
+                            'subject': "You have an upcoming event at {} with {}.".format(msg["starts_on"], msg["client"]),
+                            'from_user': user
+                        }
+                users = [user]
+                enqueue_create_notification(users, notification_doc)
             comm_list = frappe.get_list("Communication", {"reference_doctype": "Event", "reference_name": msg.name})
             if comm_list:
                 comm = comm_list[0]
@@ -114,13 +130,15 @@ def trigger_notification(user= None, number = None, msg=None, party="external", 
                 header=[frappe._("Upcoming Event Alert!"), 'blue'],
                 communication = comm.name
                 )
-        if number:
+        if number and sms_notification_enabled:
             message = "Hey {}\nYou have an upcoming {} with {}.\n- Team OneHash".format(msg["emp"]+",", \
             (msg["event_category"] if msg["event_category"] not in ["Sent/Received Email", "Other"] else "Event")+" at "+ msg["starts_on"],\
             msg["client"])
             send_sms(list(set(number)), message)
     
     elif party == "external":
+        if not notify_customers:
+            return
         email_id = ""
         description = msg["description"]
         if description:
@@ -137,9 +155,15 @@ def trigger_notification(user= None, number = None, msg=None, party="external", 
                 msg["emp"] = msg["email_id"]
             if system_notification_enabled:
                 frappe.publish_realtime(event='msgprint',message="Hi {}, you have an upcoming event at {} with {}.".format(msg["client"], msg["starts_on"], msg["emp"]),user=user)
-            # email_template = frappe.get_doc("Email Template", "External Notification")
-            # message = frappe.render_template(email_template.response, msg)
-            #create new communication to link with external email_queue
+                notification_doc = {
+                            'type': 'Alert',
+                            'document_type': msg.event_participants[0].reference_doctype,
+                            'document_name': msg.event_participants[0].reference_docname,
+                            'subject': "You have an upcoming event at {} with {}.".format(msg["starts_on"], msg["emp"]),
+                            'from_user': user
+                        }
+                users = [user]
+                enqueue_create_notification(users, notification_doc)
             comm = frappe.new_doc("Communication")
             comm.update({
                 "subject": "Notify " + str(client),
@@ -150,15 +174,12 @@ def trigger_notification(user= None, number = None, msg=None, party="external", 
                 "reference_doctype": "Event",
                 "reference_name": msg.name
             })
+            comm.append("timeline_links",{
+                "link_doctype": msg.event_participants[0].reference_doctype,
+                "link_name": msg.event_participants[0].reference_docname
+            })
             comm.insert(ignore_permissions=True)
             
-            # frappe.sendmail(
-            #     recipients=user,
-            #     subject = email_template.subject,
-            #     message = message,
-            #     header=[frappe._("Upcoming Event Alert"), 'blue'],
-            #     communication=comm.name
-            # )
             if email_notification_enabled:
                 frappe.sendmail(
                 recipients=user,
@@ -170,7 +191,7 @@ def trigger_notification(user= None, number = None, msg=None, party="external", 
                 header=[frappe._("Upcoming Event Alert!"), 'blue'],
                 communication = comm.name
                 )
-        if number:
+        if number and sms_notification_enabled:
             message = "Hey {}\nYou have an upcoming {} with {}.\n- Team OneHash".format(msg["client"]+",", \
             (msg["event_category"] if msg["event_category"] not in ["Sent/Received Email", "Other"] else "Event")+" at "+ msg["starts_on"],\
             msg["emp"])
