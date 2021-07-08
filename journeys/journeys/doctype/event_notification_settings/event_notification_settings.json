@@ -5,8 +5,11 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "notify_customers",
+  "types_of_notification_section",
   "system_notification",
-  "email_notification"
+  "email_notification",
+  "sms_notification"
  ],
  "fields": [
   {
@@ -20,12 +23,31 @@
    "fieldname": "email_notification",
    "fieldtype": "Check",
    "label": "Email Notification"
+  },
+  {
+   "default": "0",
+   "description": "Check this to enable the notifications for external parties like Lead, Opportunity and Customer.",
+   "fieldname": "notify_customers",
+   "fieldtype": "Check",
+   "label": "Notify Customers"
+  },
+  {
+   "description": "These notification types are common for both external and internal parties. Notification to internal parties is turned ON by default.",
+   "fieldname": "types_of_notification_section",
+   "fieldtype": "Section Break",
+   "label": "Notification Types"
+  },
+  {
+   "default": "0",
+   "fieldname": "sms_notification",
+   "fieldtype": "Check",
+   "label": "SMS Notification"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-05-21 19:01:07.163602",
+ "modified": "2021-07-07 14:01:25.103599",
  "modified_by": "Administrator",
  "module": "Journeys",
  "name": "Event Notification Settings",
