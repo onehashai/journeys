@@ -151,3 +151,7 @@ scheduler_events = {
 # 	"Task": "journeys.task.get_dashboard_data"
 # }
 
+
+website_redirects = [
+    {"source": "/", "target": "/app"}
+]
