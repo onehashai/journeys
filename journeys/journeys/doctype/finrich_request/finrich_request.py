@@ -107,17 +107,16 @@ def get_insta_summary(cin):
 		'user-key': "mQhNe6zA8cNtVY1GzgWEX3Y+8s0APQwkqUVxRsTN5BD2pL92IBfumQ==",
 		'dataType': "json"
 	}
-
-	#try:
-	d = session.get(url, data={},auth='', headers=headers)
-	d.raise_for_status()
-	response = d.json()
-	return response
-	# #except Exception as e:
-	# 	frappe.log_error(str(e),title="Insta Summary Error")
-	# 	frappe.log_error(response,title="Insta Summary Response")
-	# 	frappe.log_error(frappe.get_traceback())
-	# 	frappe.throw("Sorry, could not fetch details, please retry.")
+	try:
+		d = session.get(url, data={},auth='', headers=headers)
+		d.raise_for_status()
+		response = d.json()
+		return response
+	except Exception as e:
+		frappe.log_error(str(e),title="Insta Summary Error")
+		frappe.log_error(d,title="Insta Summary Response")
+		frappe.log_error(frappe.get_traceback())
+		frappe.throw("Sorry, could not fetch details, please retry.")
 
 @frappe.whitelist()
 def get_insta_basic(cin=None):

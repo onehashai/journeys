@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2021-02-26 00:56:19.310547",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -8,14 +9,16 @@
  ],
  "fields": [
   {
-   "default": "0",
+   "default": "1",
    "fieldname": "enable_profile_enrich",
    "fieldtype": "Check",
    "label": "Enable Profile Enrich"
   }
  ],
+ "index_web_pages_for_search": 1,
  "issingle": 1,
- "modified": "2021-02-26 00:56:19.310547",
+ "links": [],
+ "modified": "2021-07-29 15:30:46.388767",
  "modified_by": "Administrator",
  "module": "Journeys",
  "name": "Profile Enrich Settings",

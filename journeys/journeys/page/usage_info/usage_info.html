@@ -1,20 +1,53 @@
 <div>
-	{% if limits.upgrade_url %}
-	<div class="upgrade-message padding" style="border-bottom: 1px solid #d0d8dc;">
+	<div class="redeem-code">
+		<div class="row">
+			<aside class="col-lg-9">
+				<div class="card mb-3 h-100">
+					<div class="card-body">
+				{% if limits.upgrade_url %}
+	<div class="upgrade-message padding">
 		{% if limits.expiry %}
 			<h4>{{ __("You have {0} days left in your subscription", [days_to_expiry]) }}</h4>
 		{% else %}
 			<h4>{{ __("You have subscribed for one user free plan") }}</h4>
 		{% endif %}
-
+		{% if limits.users>0 %}
 		<p>Upgrade to a premium plan with more users, storage and priority support.</p>
-		<button class="btn btn-primary btn-sm primary-action">Upgrade</button>
+		<button class="btn btn-outline-primary btn-sm btn-upgrade">Upgrade</button>
+		{% endif %}
 	</div>
+	
 	{% endif %}
-
+	</div>
+	</div>
+			</aside>
+			<aside class="col-lg-3">
+				<div class="card mb-3 h-100">
+					<div class="card-body">
+						<form id="promocode-form" action="javascript:;" >
+							<div class="form-group"> <label>Have Promocode?</label>
+								<div class="input-group"> <input type="text" class="form-control coupon" name="promocode" required placeholder="Enter code" > 
+									<span class="input-group-append"> 
+										<button class="btn btn-apply btn-outline-primary coupon">Apply</button>
+									</span>
+								</div>
+								<div class="invalid-feedback" id="promo-validation-feedback"></div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</aside>
+		</div>
+		</div>
+		<div class="card mb-3 mt-3">
+			<div class="card-body">
 	{% if limits.users %}
 	    {% var users_percent = ((enabled_users / limits.users) * 100); %}
-	<div class="usage-info-section" style="margin: 30px;">
+	{% else %}
+		{% var users_percent = 0 %}
+		{% limits.users = "Unlimited" %}
+	{% endif %}
+	<div class="usage-info-section" style="margin: 30px; style="border-top: 1px solid #d0d8dc;">
 		<h4>{{ __("Users") }}</h4>
 
 		<div class="progress" style="margin-bottom: 0;">
@@ -24,7 +57,7 @@
 
 		<p>{%= enabled_users %} out of {%= limits.users %} enabled</p>
 	</div>
-	{% endif %}
+	
 
 	{% if limits.emails %}
 	<div class="usage-info-section" style="margin: 30px;">
@@ -65,8 +98,15 @@
 		<p>{{ usage_message }}</p>
 	</div>
 	{% endif %}
-
+</div></div>
 	{% if addon_limits %}
 	
 	{% endif %}
+	<div class="card border-danger mb-3">
+		<div class="card-body">
+		  <h3 class="card-title text-danger">Delete Account</h3>
+		  <p class="card-text" id="warning-text"></p>
+		  <button id="delete-action" class="btn btn-outline-danger btn-sm"></button>
+		</div>
+	  </div>
 </div>

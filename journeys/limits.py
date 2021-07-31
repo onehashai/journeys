@@ -125,6 +125,7 @@ def get_usage_info():
 		usage_info['upgrade_url'] = get_upgrade_url(limits.upgrade_url)
 
 	usage_info["addon_limits"] = get_addon_limits()
+	usage_info["master_domain"] = frappe.conf.get("master_site_domain")
 	return usage_info
 
 def get_upgrade_url(upgrade_url):
