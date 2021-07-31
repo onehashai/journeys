@@ -37,7 +37,9 @@ doctype_js = {
 }
 # Home Pages
 # ----------
-
+override_doctype_class = {
+	'Notification': 'journeys.journeys.custom_notification.JourneyNotification'
+}
 # application home page (will override Website Settings)
 # home_page = "login"
 
