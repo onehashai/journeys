@@ -16,7 +16,7 @@ app_license = "MIT"
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/journeys/css/journeys.css"
-# app_include_js = "/assets/journeys/js/journeys.js"
+app_include_js = "/assets/js/journeys.min.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/journeys/css/journeys.css"
@@ -151,3 +151,12 @@ scheduler_events = {
 # 	"Task": "journeys.task.get_dashboard_data"
 # }
 
+
+# setup wizard
+# setup_wizard_requires = "assets/journeys/js/setup_wizard.js"
+# setup_wizard_stages = "journeys.setup.setup_wizard.setup_wizard.get_setup_stages"
+# setup_wizard_test = "journeys.setup.setup_wizard.test_setup_wizard.run_setup_wizard_test"
+
+#website_redirects = [
+#    {"source": "/", "target": "/app"}
+#]
