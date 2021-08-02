@@ -120,9 +120,10 @@ def get_usage_info():
 	if limits.expiry:
 		usage_info['expires_on'] = formatdate(limits.expiry)
 		usage_info['days_to_expiry'] = (getdate(limits.expiry) - getdate()).days
-
-	if limits.upgrade_url:
-		usage_info['upgrade_url'] = get_upgrade_url(limits.upgrade_url)
+	upgrade_url = frappe.conf.upgrade_url
+	if upgrade_url:
+		usage_info["limits"].upgrade_url = upgrade_url
+		usage_info['upgrade_url'] = get_upgrade_url(upgrade_url)
 
 	usage_info["addon_limits"] = get_addon_limits()
 	usage_info["master_domain"] = frappe.conf.get("master_site_domain")
