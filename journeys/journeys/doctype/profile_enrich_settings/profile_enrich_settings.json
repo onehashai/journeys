@@ -9,7 +9,7 @@
  ],
  "fields": [
   {
-   "default": "1",
+   "default": 1,
    "fieldname": "enable_profile_enrich",
    "fieldtype": "Check",
    "label": "Enable Profile Enrich"

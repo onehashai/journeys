@@ -1,0 +1,5 @@
+journeys.patches.v13.add_standard_navbar_items #2021-08-03
+execute:frappe.reload_doc("journeys", "doctype", "FinRich Settings") #2021-08-03
+execute:frappe.reload_doc("journeys", "doctype", "Profile Enrich Settings") #2021-08-04
+execute:frappe.db.set_value("Profile Enrich Settings", None, "enable_profile_enrich", 1)
+execute:frappe.db.set_value("FinRich Settings", None, "enable_finrich", 1)
