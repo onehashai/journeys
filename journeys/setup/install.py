@@ -9,7 +9,7 @@ from frappe import _
 def after_install():
 	add_standard_navbar_items()
 	add_app_name()
-    enable_finrich_profile_enrich()
+	enable_finrich_profile_enrich()
 	frappe.db.commit()
 
 def add_standard_navbar_items():
