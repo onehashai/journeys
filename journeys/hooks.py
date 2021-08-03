@@ -16,7 +16,7 @@ app_license = "MIT"
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/journeys/css/journeys.css"
-app_include_js = "/assets/js/journeys.min.js"
+# app_include_js = "/assets/js/journeys.min.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/journeys/css/journeys.css"
@@ -61,7 +61,7 @@ override_doctype_class = {
 # ------------
 
 # before_install = "journeys.install.before_install"
-# after_install = "journeys.install.after_install"
+after_install = "journeys.setup.install.after_install"
 
 # Desk Notifications
 # ------------------
