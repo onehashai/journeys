@@ -33,7 +33,8 @@ app_license = "MIT"
 
 doctype_js = {
     'Lead': 'public/js/lead.js',
-	'User': 'public/js/user.js'
+	'User': 'public/js/user.js',
+	"Notification" : "public/js/Notification.js"
 }
 # Home Pages
 # ----------
@@ -160,3 +161,12 @@ scheduler_events = {
 #website_redirects = [
 #    {"source": "/", "target": "/app"}
 #]
+
+fixtures = [{"dt": "Custom Field", "filters": [
+		[
+			"name", "in", [
+				"Notification-whatsapp_template"
+			]
+		]
+	]}
+, "Property Setter"]

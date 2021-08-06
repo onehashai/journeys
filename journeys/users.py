@@ -1,7 +1,8 @@
 from __future__ import unicode_literals
-import frappe
+import frappe, json
 from frappe import _
 from frappe.utils import cstr
+from frappe.utils import get_url
 
 def update_user_to_main_app():
     admin_site_name = "admin_onehash"
@@ -58,3 +59,9 @@ def update_user_to_main_app():
         print(e)
     finally:
         frappe.destroy()
+
+@frappe.whitelist()
+def get_attach_link(doc, print_format):
+    doc = json.loads(doc)
+    doc = frappe.get_doc(doc.get("doctype"), doc.get("docname"))
+    return get_url()+"/" + doc.doctype + "/" + doc.name + "?format=" + print_format + "&key=" + doc.get_signature()

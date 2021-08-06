@@ -1,5 +1,6 @@
 {
     "js/journeys.min.js":[
-        "public/js/help_links.js"
+        "public/js/help_links.js",
+        "public/js/whatsapp.js"
     ]
 }
