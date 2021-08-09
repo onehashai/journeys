@@ -7,7 +7,9 @@
  "field_order": [
   "enabled",
   "api_endpoint",
-  "access_token"
+  "access_token",
+  "broadcast_name",
+  "add_contact_parameters"
  ],
  "fields": [
   {
@@ -25,12 +27,23 @@
    "fieldname": "access_token",
    "fieldtype": "Small Text",
    "label": "Access Token"
+  },
+  {
+   "fieldname": "broadcast_name",
+   "fieldtype": "Data",
+   "label": "Broadcast Name"
+  },
+  {
+   "fieldname": "add_contact_parameters",
+   "fieldtype": "Table",
+   "label": "Add Contact Parameters",
+   "options": "SMS Parameter"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-07-21 16:13:42.793494",
+ "modified": "2021-08-09 10:13:02.775900",
  "modified_by": "Administrator",
  "module": "Journeys",
  "name": "Wati Settings",
