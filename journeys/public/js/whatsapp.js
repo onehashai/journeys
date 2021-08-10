@@ -12,9 +12,6 @@ frappe.views.WhatsAppComposer = class {
 
 		let counter = 0
 		let context = {}
-		let show_attachment = 0;
-		let attachment_list = []
-		let print_format_list = []
 		let contact_dict = {};
 		let contact_list = [];
 		cur_frm.meta.fields.forEach((e) => { if (e.options == "Phone") { contact_dict[e.fieldname] = e.label } })
@@ -143,7 +140,6 @@ frappe.views.WhatsAppComposer = class {
 
 									})
 									let header_html = "";
-									let header_body_html = "";
 									if (data.header_type != 'text' && data.header_type != '') {
 										header_html = data.header_type.charAt(0).toUpperCase() + data.header_type.slice(1) + ` Attachment: <a href="` + data.header_link + `">` + data.header_link + `</a><br><br>`
 

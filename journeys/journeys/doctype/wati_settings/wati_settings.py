@@ -132,6 +132,7 @@ def send_template_message(doc, whatsapp_numbers, broadcast_name, template_name, 
 def get_whatsapp_messages():
 	pass
 
+@frappe.whitelist()
 def get_message_templates():
 	try:
 		if not frappe.db.get_single_value("Wati Settings", "enabled"):
@@ -146,7 +147,7 @@ def get_message_templates():
 			token = "Bearer " + token
 
 		broadcast_name = frappe.db.get_single_value("Wati Settings", "broadcast_name")
-		payload={'pageSize': '250',
+		payload={'pageSize': str(frappe.db.get_single_value("Wati Settings", "number_of_templates") or 250),
 		'pageNumber': '1'}
 		files=[
 
@@ -191,11 +192,15 @@ def get_message_templates():
 				return [True, "Whatsapp Templates Fetched Successfully"]
 			else:
 				frappe.log_error(response.text, "Whatsapp Templates Failed")
+				return [False, "Whatsapp Templates Failed to Fetch"]
 		else:
-			frappe.log_error(response.text, "Whatsapp Templates Failed")
+			frappe.log_error(response, "Whatsapp Templates Failed")
+			return [False, "Whatsapp Templates Failed to Fetch"]
 	except:
 		frappe.log_error(frappe.get_traceback(), "Whatsapp Templates Errored")
+		return [False, "Whatsapp Templates Failed to Fetch"]
 
+@frappe.whitelist()
 def get_contacts():
 	try:
 		if not frappe.db.get_single_value("Wati Settings", "enabled"):
@@ -209,7 +214,7 @@ def get_contacts():
 		if "Bearer " not in token:
 			token = "Bearer " + token
 
-		payload={'pageSize': '100',
+		payload={'pageSize': str(frappe.db.get_single_value("Wati Settings", "number_of_contacts") or 500),
 		'pageNumber': '1'}
 		files=[
 
@@ -234,10 +239,16 @@ def get_contacts():
 						}).insert(ignore_permissions=True)
 						saved_contacts.append(contact.get("phone"))
 				frappe.db.commit()
+				return [True, "WhatsApp Contacts Fetched Successfully"]
 			else:
 				frappe.log_error(response.text, "Whatsapp Contact Fetch Failed")
+				return [False, "WhatsApp Contacts Failed to Fetch"]
+		else:
+			frappe.log_error(response, "Whatsapp Contact Fetch Failed")
+			return [False, "WhatsApp Contacts Failed to Fetch"]
 	except:
 		frappe.log_error(frappe.get_traceback(), "Whatsapp Contact Fetch Errored")
+		return [False, "WhatsApp Contacts Failed to Fetch"]
 
 def add_contact(number=None):
 	try:
