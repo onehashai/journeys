@@ -163,7 +163,7 @@ def get_message_templates():
 			response_text = json.loads(response.text)
 			if response_text.get("result") in ["success", "true", True]:
 				for template in response_text.get("messageTemplates"):
-					if template.get("elementName") not in saved_templates:
+					if template.get("status") == "APPROVED" and template.get("elementName") not in saved_templates:
 						wt_doc = frappe.get_doc({
 							"doctype": "Whatsapp Template",
 							"broadcast_name": broadcast_name or "Broadcast",
@@ -172,7 +172,7 @@ def get_message_templates():
 							"language_code": template.get("language").get("value", None),
 							"header_type": template.get("header").get("typeString", None) if template.get("header") else "",
 							"header_text": template.get("header").get("text", None) if template.get("header") else "",
-							"header_link": template.get("header").get("link", None) if template.get("header") else "",
+							"header_link": template.get("header").get("link", None) if template.get("header") and template.get("header").get("link") else template.get("header").get("mediaFromPC", ""),
 							"message_body": template.get("bodyOriginal") if template.get("type") == "template" else template.get("hsmOriginal")
 						})
 
