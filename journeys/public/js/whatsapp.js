@@ -1,3 +1,4 @@
+frappe.provide("frappe.views")
 frappe.views.WhatsAppComposer = class {
 	constructor(opts) {
 		$.extend(this, opts);
