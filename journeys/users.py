@@ -2,8 +2,8 @@ from __future__ import unicode_literals
 import frappe, json
 from frappe import _
 from frappe.utils import cstr
-from frappe.utils.data import get_url
-from frappe.desk.form.utils import get_pdf_link
+from frappe.utils import get_url
+from frappe.utils.pdf import get_pdf
 
 def update_user_to_main_app():
     admin_site_name = "admin_onehash"
@@ -64,4 +64,15 @@ def update_user_to_main_app():
 @frappe.whitelist()
 def get_attach_link(doc, print_format):
     doc = json.loads(doc)
-    return get_url()+"/" + get_pdf_link(doc.get("doctype"), doc.get("docname"), print_format)
+    doc = frappe.get_doc(doc.get("doctype"), doc.get("docname"))
+    url = get_url() + "/api/method/journeys.users.get_print_pdf?key=" + doc.get_signature() + "&doc="+doc.doctype + "&name="+ doc.name + "&printf=" + print_format
+    return url
+
+@frappe.whitelist(allow_guest=True)    
+def get_print_pdf(key, doc, name, printf):
+    if not key == frappe.get_doc(doc, name).get_signature():
+        return
+    html = frappe.get_print(doc, name, printf)
+    frappe.local.response.filename = "{name}.pdf".format(name=name.replace(" ", "-").replace("/", "-"))
+    frappe.local.response.filecontent = get_pdf(html)
+    frappe.local.response.type = "pdf"
