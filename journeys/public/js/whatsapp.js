@@ -14,6 +14,7 @@ frappe.views.WhatsAppComposer = class {
 		let context = {}
 		let contact_dict = {};
 		let contact_list = [];
+		let contacts = [];
 		cur_frm.meta.fields.forEach((e) => { if (e.options == "Phone") { contact_dict[e.fieldname] = e.label } })
 		let doc_field_list = [{
 			"value": "Attachment",
@@ -35,10 +36,13 @@ frappe.views.WhatsAppComposer = class {
 				})
 			}
 			if (key in contact_dict && value.replaceAll(" ", "") != "") {
-				contact_list.push({
-					"value": value,
-					"description": contact_dict[key]
-				})
+				if(!contacts.includes(value)){
+					contacts.push(value)
+					contact_list.push({
+						"value": value,
+						"description": contact_dict[key]
+					})
+				}
 			}
 		}
 		var d = new frappe.ui.Dialog({
