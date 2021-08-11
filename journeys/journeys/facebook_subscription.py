@@ -118,3 +118,10 @@ def unsubscribe(**kwargs):
     except:
         frappe.log_error(frappe.get_traceback())
         return "error"
+
+@frappe.whitelist()
+def fetch_app_id():
+    if frappe.local.conf.facebook_config and frappe.local.conf.facebook_config.get("facebook_app_id"):
+        return frappe.local.conf.facebook_config.get("facebook_app_id")
+    else:
+        return "error"
