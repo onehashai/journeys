@@ -4,6 +4,8 @@ from frappe import _
 from frappe.utils import cstr
 from frappe.utils import get_url
 from frappe.utils.pdf import get_pdf
+from PyPDF2 import PdfFileReader, PdfFileWriter
+import io
 
 def update_user_to_main_app():
     admin_site_name = "admin_onehash"
@@ -74,5 +76,24 @@ def get_print_pdf(key, doc, name, printf):
         return
     html = frappe.get_print(doc, name, printf)
     frappe.local.response.filename = "{name}.pdf".format(name=name.replace(" ", "-").replace("/", "-"))
-    frappe.local.response.filecontent = get_pdf(html)
+    content = get_pdf(html)
+
+    output = io.BytesIO()
+    output.write(content)
+    output.seek(0)
+
+    reader = PdfFileReader(output)
+    writer = PdfFileWriter()
+
+    writer.appendPagesFromReader(reader)
+    metadata = reader.getDocumentInfo()
+    writer.addMetadata(metadata)
+    writer.addMetadata({
+        '/Title': frappe.local.response.filename
+    })
+
+    tmp = io.BytesIO()
+    writer.write(tmp)
+
+    frappe.local.response.filecontent = tmp.getvalue()
     frappe.local.response.type = "pdf"
