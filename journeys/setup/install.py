@@ -18,8 +18,9 @@ def add_standard_navbar_items():
 	onehash_navbar_items = [
 		{
 			'item_label': 'Manage Subscription',
-			'item_type': 'Route',
-			'route': '/app/usage-info',
+			'item_type': 'Action',
+			'route': '',
+			'action':'frappe.set_route("app/usage-info")',
 			'is_standard': 1
 		},
         {
