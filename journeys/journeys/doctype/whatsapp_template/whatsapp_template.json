@@ -1,0 +1,92 @@
+{
+ "actions": [],
+ "autoname": "field:template_name",
+ "creation": "2021-07-22 13:09:31.123309",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "template_name",
+  "broadcast_name",
+  "category",
+  "language_code",
+  "header_type",
+  "header",
+  "header_link",
+  "message_body",
+  "whatsapp_map"
+ ],
+ "fields": [
+  {
+   "fieldname": "template_name",
+   "fieldtype": "Data",
+   "label": "Template Name",
+   "unique": 1
+  },
+  {
+   "fieldname": "broadcast_name",
+   "fieldtype": "Data",
+   "label": "Broadcast Name"
+  },
+  {
+   "fieldname": "category",
+   "fieldtype": "Data",
+   "label": "Category"
+  },
+  {
+   "fieldname": "message_body",
+   "fieldtype": "Small Text",
+   "label": "Message Body"
+  },
+  {
+   "fieldname": "header_type",
+   "fieldtype": "Data",
+   "label": "Header Type"
+  },
+  {
+   "fieldname": "header",
+   "fieldtype": "Small Text",
+   "label": "Header Text"
+  },
+  {
+   "fieldname": "language_code",
+   "fieldtype": "Data",
+   "label": "Language Code"
+  },
+  {
+   "fieldname": "whatsapp_map",
+   "fieldtype": "Table",
+   "label": "Whatsapp Map",
+   "options": "Whatsapp Template Map"
+  },
+  {
+   "fieldname": "header_link",
+   "fieldtype": "Data",
+   "label": "Header Link"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2021-08-06 14:01:09.911584",
+ "modified_by": "Administrator",
+ "module": "Journeys",
+ "name": "Whatsapp Template",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

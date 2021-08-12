@@ -1,7 +1,11 @@
 from __future__ import unicode_literals
-import frappe
+import frappe, json
 from frappe import _
 from frappe.utils import cstr
+from frappe.utils import get_url
+from frappe.utils.pdf import get_pdf
+from PyPDF2 import PdfFileReader, PdfFileWriter
+import io
 
 def update_user_to_main_app():
     admin_site_name = "admin_onehash"
@@ -58,3 +62,38 @@ def update_user_to_main_app():
         print(e)
     finally:
         frappe.destroy()
+
+@frappe.whitelist()
+def get_attach_link(doc, print_format):
+    doc = json.loads(doc)
+    doc = frappe.get_doc(doc.get("doctype"), doc.get("docname"))
+    url = get_url() + "/api/method/journeys.users.get_print_pdf?key=" + doc.get_signature() + "&doc="+doc.doctype + "&name="+ doc.name + "&printf=" + print_format
+    return url
+
+@frappe.whitelist(allow_guest=True)    
+def get_print_pdf(key, doc, name, printf):
+    if not key == frappe.get_doc(doc, name).get_signature():
+        return
+    html = frappe.get_print(doc, name, printf)
+    frappe.local.response.filename = "{name}.pdf".format(name=name.replace(" ", "-").replace("/", "-"))
+    content = get_pdf(html)
+
+    output = io.BytesIO()
+    output.write(content)
+    output.seek(0)
+
+    reader = PdfFileReader(output)
+    writer = PdfFileWriter()
+
+    writer.appendPagesFromReader(reader)
+    metadata = reader.getDocumentInfo()
+    writer.addMetadata(metadata)
+    writer.addMetadata({
+        '/Title': frappe.local.response.filename
+    })
+
+    tmp = io.BytesIO()
+    writer.write(tmp)
+
+    frappe.local.response.filecontent = tmp.getvalue()
+    frappe.local.response.type = "pdf"

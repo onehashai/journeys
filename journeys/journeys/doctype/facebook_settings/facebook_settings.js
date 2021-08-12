@@ -3,7 +3,7 @@
 
 frappe.ui.form.on('Facebook Settings', {
 	refresh: function (frm) {
-		var app_id = '263382801860550';
+		var app_id;
 		var user_access_token;
 		var user_id;
 		var lead_fields;
@@ -17,14 +17,20 @@ frappe.ui.form.on('Facebook Settings', {
 
 
 		window.fbAsyncInit = function () {
-
-			FB.init({
-				appId: app_id,
-				xfbml: true,
-				version: 'v10.0'
-			});
-			console.log("Successfully loaded fb init");
-
+			frappe.call({
+				method: "journeys.journeys.facebook_subscription.fetch_app_id",
+				callback: function (r) {
+					if(r.message != "error"){
+						app_id = r.message
+						FB.init({
+							appId: app_id,
+							xfbml: true,
+							version: 'v10.0'
+						});
+						console.log("Successfully loaded fb init");
+					}
+				}
+			})
 			frappe.call({
 				method: "journeys.journeys.facebook_subscription.fetch_fields",
 				callback: function (r) {

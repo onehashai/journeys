@@ -118,3 +118,15 @@ def unsubscribe(**kwargs):
     except:
         frappe.log_error(frappe.get_traceback())
         return "error"
+
+@frappe.whitelist()
+def fetch_app_id():
+    try:
+        if frappe.local.conf.facebook_config and frappe.local.conf.facebook_config.get("facebook_app_id"):
+            return frappe.local.conf.facebook_config.get("facebook_app_id")
+        else:
+            frappe.log_error("No Facebook App Id found in Facebook Integration", "Facebook AppId Error")
+            return "error"
+    except:
+        frappe.log_error("No Facebook App Id found in Facebook Integration", "Facebook AppId Error")
+        return "error"
