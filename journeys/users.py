@@ -96,4 +96,4 @@ def get_print_pdf(key, doc, name, printf):
     writer.write(tmp)
 
     frappe.local.response.filecontent = tmp.getvalue()
-    frappe.local.response.type = "pdf"
+    frappe.local.response.type = "download"
