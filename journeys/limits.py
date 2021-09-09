@@ -32,8 +32,9 @@ def check_if_expired():
 	expires_on = formatdate(limits.get("expiry"))
 	support_email = limits.get("support_email")
 
-	if limits.upgrade_url:
-		message = _("""Your subscription expired on {0}. To renew, {1}.""").format(expires_on, get_upgrade_link(limits.upgrade_url))
+	upgrade_url  = limits.upgrade_url or frappe.local.conf.get("upgrade_url")
+	if upgrade_url:
+		message = _("""Your subscription expired on {0}. To renew, {1}.""").format(expires_on, get_upgrade_link(upgrade_url))
 
 	elif support_email:
 		message = _("""Your subscription expired on {0}. To renew, please send an email to {1}.""").format(expires_on, support_email)
@@ -62,6 +63,7 @@ def get_expiry_message():
 		return ""
 
 	limits = get_limits()
+	upgrade_url = frappe.conf.get("upgrade_url")
 	if not limits.expiry:
 		return ""
 
@@ -83,10 +85,10 @@ def get_expiry_message():
 		elif days_to_expiry <= EXPIRY_WARNING_DAYS:
 			message = _("Your subscription will expire on {0}.").format(formatdate(expires_on))
 
-	if message and limits.upgrade_url:
-		upgrade_link = get_upgrade_link(limits.upgrade_url)
+	if message and upgrade_url:
+		upgrade_link = get_upgrade_link(upgrade_url)
 		message += ' ' + _('To renew, {0}.').format(upgrade_link)
-
+	#frappe.msgprint(message)
 	return message
 
 @frappe.whitelist()

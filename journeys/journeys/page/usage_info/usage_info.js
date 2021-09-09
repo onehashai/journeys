@@ -47,6 +47,30 @@ frappe.pages['usage-info'].on_page_load = function(wrapper) {
 				addon_limits
 			}))).appendTo(page.main);
 
+			let formdata = "site_name="+frappe.boot.sitename;
+			$.ajax({
+				url:"https://"+master_domain+"/api/method/better_saas.better_saas.doctype.saas_user.saas_user.get_promocode_benefits",
+				data: formdata,
+				crossDomain:true,
+				success: function(r) {
+					if(r.message){
+						let is_lifetime = false;
+						$.each(r.message,(key,value)=>{
+							console.log(value);
+							if(value.no_expiry){
+								is_lifetime = true;
+								$(page.main).find(".upgrade-message").addClass("hide");
+								return false;
+							}
+						});
+						$(page.main).find("#coupon-benefits").html(frappe.render_template("promocode",{coupon_codes:r.message}));
+					}
+				},
+				error:function(xhr,status,error){
+					$(page.main).find("#coupon-benefits").html("Sorry, Could not load the details.");
+				}
+			});
+
 			var btn_text = usage_info.limits.users == 1 ? __("Upgrade") : __("Renew / Upgrade");
 			$(page.main).find('.btn-upgrade').html(btn_text).on('click', () => {
 				let open_link = (usage_info.upgrade_url)?usage_info.upgrade_url:("mailto:"+usage_info.support_email+"?subject=Upgrade Site");
@@ -111,7 +135,9 @@ frappe.pages['usage-info'].on_page_load = function(wrapper) {
 							$("#promo-validation-feedback").addClass("valid-feedback");
 							$("#promo-validation-feedback").text(r.message["message"]);
 							$("#promo-validation-feedback").show();
-							window.location.reload();
+							setTimeout(() => {
+								window.location.reload();	
+							}, 2000);
 						}
 					},
 					error:function(xhr,status,error){
@@ -122,10 +148,11 @@ frappe.pages['usage-info'].on_page_load = function(wrapper) {
 
 					}
 				});
-			
 			});
 		}
 	});
-	
+
+
+
 
 }

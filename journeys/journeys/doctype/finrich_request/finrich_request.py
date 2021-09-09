@@ -48,8 +48,9 @@ def get_finrich_data(cin,reference_doctype=None,reference_docname=None,request_f
 
 def make_finrich_request(cin,reference_doctype,reference_docname,request_for):
 	journeys.switch_to_site_db()
+	service_name = "FinRich" if request_for=="Basic" else "FinRich Plus"
 	if(not check_limits(service_name)):
-		frappe.throw(_("Insuffecient Credits for {0}.").format("FinRich"),MaxLimitReachedError,_("Insuffecient Credits"))
+		frappe.throw(_("Insuffecient Credits for {0}.").format(service_name),MaxLimitReachedError,_("Insuffecient Credits"))
 		return
 	finrich_request = frappe.get_doc({
 		"doctype":"FinRich Request",

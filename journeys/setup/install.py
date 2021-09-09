@@ -14,19 +14,35 @@ def after_install():
 
 def add_standard_navbar_items():
 	navbar_settings = frappe.get_single("Navbar Settings")
-
+	update_navbar_items = {"Documentation":
+		{
+                'item_label': 'Documentation',
+                'item_type': 'Route',
+                'route': 'https://help.onehash.ai',
+                'action': '',
+                'is_standard': 1
+        },
+		"Report an Issue":{
+                'item_label': 'Report an Issue',
+                'item_type': 'Action',
+                'route': '',
+                'action': "new frappe.views.CommunicationComposer({'recipients':'support@onehash.ai', 'subject':'['+window.location.host+'] '+frappe.session.user})",
+                'is_standard': 1
+        }
+	}
 	onehash_navbar_items = [
 		{
-			'item_label': 'Manage Subscription',
-			'item_type': 'Route',
-			'route': '/app/usage-info',
-			'is_standard': 1
+			"item_label": "Manage Subscription",
+			"item_type": "Action",
+			"route": "",
+			"action":"frappe.set_route('app/usage-info')",
+			"is_standard": 1
 		},
         {
-			'item_label': '',
-			'item_type': 'Separator',
-			'route': '',
-			'is_standard': 1
+			"item_label": "",
+			"item_type": "Separator",
+			"route": "",
+			"is_standard": 1
 		}
 	]
 
@@ -39,14 +55,24 @@ def add_standard_navbar_items():
 			navbar_settings.append('help_dropdown', item)
 
 	for item in current_navbar_items:
-		navbar_settings.append('help_dropdown', {
-			'item_label': item.item_label,
-			'item_type': item.item_type,
-			'route': item.route,
-			'action': item.action,
-			'is_standard': item.is_standard,
-			'hidden': item.hidden
-		})
+		if item.item_label in update_navbar_items:
+			navbar_settings.append('help_dropdown', {
+				'item_label': item.item_label,
+				'item_type': item.item_type,
+				'route': update_navbar_items[item.item_label]['route'],
+				'action': update_navbar_items[item.item_label]['action'],
+				'is_standard': update_navbar_items[item.item_label]['is_standard'],
+				'hidden': item.hidden
+			})
+		else:
+			navbar_settings.append('help_dropdown', {
+				'item_label': item.item_label,
+				'item_type': item.item_type,
+				'route': item.route,
+				'action': item.action,
+				'is_standard': item.is_standard,
+				'hidden': item.hidden
+			})
 
 	navbar_settings.save()
 
