@@ -16,7 +16,7 @@ def update_report_an_issue_navbar_link():
             navbar_settings.append('help_dropdown', {
                 'item_label': item.item_label,
                 'item_type': 'Action',
-                'route': '',
+                'route': None,
                 'action': "new frappe.views.CommunicationComposer({'recipients':'support@onehash.ai', 'subject':'['+window.location.host+'] '+frappe.session.user})",
                 'is_standard': item.is_standard,
                 'hidden': item.hidden
@@ -30,7 +30,15 @@ def update_report_an_issue_navbar_link():
                 'is_standard': item.is_standard,
                 'hidden': item.hidden
             })
-
+        elif(item.item_label=="User Forum"):
+            navbar_settings.append('help_dropdown', {
+                'item_label': 'Roadmap',
+                'item_type': 'Route',
+                'route': 'https://roadmap.onehash.ai',
+                'action': None,
+                'is_standard': item.is_standard,
+                'hidden': item.hidden
+            })
         else:
             navbar_settings.append('help_dropdown',item)
 
