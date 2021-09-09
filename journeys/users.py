@@ -97,3 +97,11 @@ def get_print_pdf(key, doc, name, printf):
 
     frappe.local.response.filecontent = tmp.getvalue()
     frappe.local.response.type = "download"
+
+
+@frappe.whitelist(allow_guest=True) 
+def forms():
+    from frappe.website.render import render
+    resp = render("/login", http_status_code=200)
+    resp.headers["X-Frame-Options"] = "ALLOWALL"
+    return resp
