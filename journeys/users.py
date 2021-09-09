@@ -1,67 +1,15 @@
 from __future__ import unicode_literals
+from os import environ
 import frappe, json
 from frappe import _
 from frappe.utils import cstr
 from frappe.utils import get_url
 from frappe.utils.pdf import get_pdf
 from PyPDF2 import PdfFileReader, PdfFileWriter
-import io
-
-def update_user_to_main_app():
-    admin_site_name = "admin_onehash"
-    #current_site_name = site.name
-    current_site_name = cstr(frappe.local.site)
-    frappe.init(site=current_site_name)
-    frappe.connect()
-    print("Connected to site="+str(current_site_name))
-    enabled_system_users = frappe.get_all("User",fields=['name','email','last_active','user_type','enabled','first_name','last_name','creation'])
-    print("All User Count for Site="+str(current_site_name)+" is "+str(len(enabled_system_users)))  
-
-    frappe.destroy()
-    frappe.init(site=admin_site_name)
-    frappe.connect()        
-    try:
-        print("Trying to retrieve site="+str(current_site_name))
-        site_doc = frappe.get_doc('Saas Site',current_site_name)
-        site_doc.user_details = {}
-    
-        enabled_users_count = 0
-        max_last_active = None
-        for user in enabled_system_users:
-            print("Trying to retrieve site="+str(current_site_name)+" User "+str(user.name))        
-            if(user.name in ['Administrator','Guest']):
-                continue
-
-            site_doc.append('user_details', {
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'user_type': user.user_type,
-                'active': user.enabled,
-                'emai_id': user.email,
-                'last_active':user.last_active
-            })
-
-            if(user.enabled):
-                enabled_users_count = enabled_users_count + 1
-
-            if(user.last_active==None):
-                continue
-
-            if(max_last_active==None):
-                max_last_active = user.last_active
-            elif(max_last_active<user.last_active):
-                max_last_active = user.last_active
-
-        site_doc.number_of_users =   (len(enabled_system_users)-2)
-        site_doc.number_of_active_users= enabled_users_count
-        site_doc.last_activity_time = max_last_active
-        site_doc.save()
-        frappe.db.commit()
-        print("Site Doc Updated for site "+str(current_site_name))
-    except Exception as e:
-        print(e)
-    finally:
-        frappe.destroy()
+import io, requests
+from werkzeug.wrappers import Response, Request
+from frappe.website.render import render
+from bs4 import BeautifulSoup
 
 @frappe.whitelist()
 def get_attach_link(doc, print_format):
@@ -97,3 +45,121 @@ def get_print_pdf(key, doc, name, printf):
 
     frappe.local.response.filecontent = tmp.getvalue()
     frappe.local.response.type = "pdf"
+
+@frappe.whitelist(allow_guest=True)    
+def forms(path=None, referer=None):
+    try:
+        form = frappe.get_doc("Web Form", path)
+        if not form.is_embeddable:
+            resp = render("/message", http_status_code=200)
+            data = resp.data
+            soup = BeautifulSoup(data, 'html.parser')
+            soup = minify(soup)
+            msg = "<p>This Form is not Embeddable</p>"
+            for i in soup.find_all('div',  {"class":"page-card-body"}):
+                i.append(BeautifulSoup(msg, 'html.parser'))
+            resp.data = soup.prettify()
+            resp.headers["X-Frame-Options"] = "ALLOWALL"
+            return resp
+
+        if form.time_limit and (frappe.utils.get_datetime() > form.to_date or frappe.utils.get_datetime() < form.from_date):
+            resp = render("/message", http_status_code=200)
+            data = resp.data
+            soup = BeautifulSoup(data, 'html.parser')
+            soup = minify(soup)
+            msg = "<p>Time Limit has exceeded to submit this form</p>"
+            for i in soup.find_all('div',  {"class":"page-card-body"}):
+                i.append(BeautifulSoup(msg, 'html.parser'))
+            resp.data = soup.prettify()
+            resp.headers["X-Frame-Options"] = "ALLOWALL"
+            return resp
+        doc_list_len = len(frappe.get_all("Web Form Record", {"form": path}))
+        if form.restrict_number_of_submission not in [0,""] and form.restrict_number_of_submission <= doc_list_len:
+            resp = render("/message", http_status_code=200)
+            data = resp.data
+            soup = BeautifulSoup(data, 'html.parser')
+            soup = minify(soup)
+            msg = "<p>Maximum Submission Limit has been reached for this Form</p>"
+            for i in soup.find_all('div',  {"class":"page-card-body"}):
+                i.append(BeautifulSoup(msg, 'html.parser'))
+            resp.data = soup.prettify()
+            resp.headers["X-Frame-Options"] = "ALLOWALL"
+            return resp
+        if frappe.local.request_ip:
+            doc_list_len = len(frappe.get_all("Web Form Record", {"form": path, "ip_address": frappe.local.request_ip}))
+            if form.restrict_submission_per_ip not in [0, ""] and form.restrict_submission_per_ip <= doc_list_len:
+                resp = render("/message", http_status_code=200)
+                data = resp.data
+                soup = BeautifulSoup(data, 'html.parser')
+                soup = minify(soup)
+                msg = "<p>Maximum Submission Limit has been reached for this Form against your IP Address</p>"
+                for i in soup.find_all('div',  {"class":"page-card-body"}):
+                    i.append(BeautifulSoup(msg, 'html.parser'))
+                resp.data = soup.prettify()
+                resp.headers["X-Frame-Options"] = "ALLOWALL"
+                return resp
+        city = region = country = loc = None
+        if form.collect_geo_location:
+            url = "https://ipinfo.io/" + frappe.local.request_ip if form.collect_ip_address else ""
+            res = requests.get(url)
+            if res.status_code in [200, "200"]:
+                data = json.loads(res.text)
+                city = data.get("city")
+                region = data.get("region")
+                country = data.get("country")
+                loc = data.get("loc")
+
+        record = frappe.get_doc({
+            "doctype": "Web Form Record",
+            "form": path,
+            "doc_type": form.doc_type,
+            "module": form.module,
+            "geo_location": "",
+            "city": city,
+            "region": region,
+            "country": country,
+            "geo_location": loc,
+            "ip_address": frappe.local.request_ip if form.collect_ip_address else "",
+            "referer": referer or ""
+        })
+        record.insert(ignore_permissions=True)
+        frappe.db.commit()
+        if not path:
+            if frappe.local.request.__dict__.get("environ").get("HTTP_REFERER") != frappe.local.request.__dict__.get("url"):
+                path = frappe.local.request.__dict__.get("environ").get("HTTP_REFERER")
+                try:
+                    # Python 3
+                    from urllib.parse import urlparse, parse_qs
+                except ImportError:
+                    # Python 2
+                    from urlparse import urlparse, parse_qs
+
+                o = urlparse(path)
+                query = parse_qs(o.query)
+                path = query.get("path")[0] if query.get("path") else ""
+
+        resp = render("/"+path, http_status_code=200)
+        resp.headers["X-Frame-Options"] = "ALLOWALL"
+
+        data = resp.data
+
+        soup = BeautifulSoup(data, 'html.parser')
+        soup = minify(soup)
+        soup.find('body').attrs["data-path"] += "?path=" + path
+        resp.data = soup.prettify()
+        return resp
+    except:
+        frappe.log_error(frappe.get_traceback(), "Embeddable Form {} Error".format(path))
+
+def minify(soup):    
+    for n in soup.find_all('nav'):
+        n.decompose()
+    for f in soup.find_all('footer'):
+        f.decompose()
+    for g in soup.find_all('meta',  {"name":"url"}):
+        g.decompose()
+    for h in soup.find_all('meta',  {"property":"og:url"}):
+        h.decompose()
+    for i in soup.find_all('link',  {"rel":"canonical"}):
+        i.decompose()
+    return soup

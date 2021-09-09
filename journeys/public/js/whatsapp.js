@@ -51,6 +51,7 @@ frappe.views.WhatsAppComposer = class {
 				{
 					'label': __("Template"), 'fieldname': 'template', 'fieldtype': 'Link', 'options': "Whatsapp Template",
 					onchange: function (e) {
+						if(this.value){
 						frappe.db.get_doc("Whatsapp Template", this.value)
 							.then((data) => {
 								counter += 1
@@ -144,7 +145,7 @@ frappe.views.WhatsAppComposer = class {
 
 									})
 									let header_html = "";
-									if (data.header_type != 'text' && data.header_type != '') {
+									if (!["text", "", undefined, null].includes(data.header_type)) {
 										header_html = data.header_type.charAt(0).toUpperCase() + data.header_type.slice(1) + ` Attachment: <a href="` + data.header_link + `">` + data.header_link + `</a><br><br>`
 
 									}
@@ -159,7 +160,7 @@ frappe.views.WhatsAppComposer = class {
 								}
 							});
 					}
-				},
+				}},
 
 				{ 'label': __("Content"), 'fieldname': 'content', 'fieldtype': 'HTML' },
 
