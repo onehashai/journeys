@@ -90,11 +90,7 @@ frappe.views.WhatsAppComposer = class {
 											"fieldname": e.field_name + "_attachment",
 											"hidden": true
 										})
-										d.get_field(e.field_name + "_attachment").df.options = {
-											restrictions: {
-												allowed_file_types: ['.csv']
-											}
-										};
+										
 										d.get_field(e.field_name + "_attachment").refresh()
 
 										// make print_format field for every field
