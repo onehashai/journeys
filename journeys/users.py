@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 from os import environ
-import frappe, json
+import frappe, json, re
 from frappe import _
 from frappe.utils import cstr
 from frappe.utils import get_url
@@ -146,6 +146,7 @@ def forms(path=None, referer=None):
         soup = BeautifulSoup(data, 'html.parser')
         soup = minify(soup)
         soup.find('body').attrs["data-path"] += "?path=" + path
+        soup.find(text=re.compile('is_chat_enabled')).replace_with(soup.find(text=re.compile('is_chat_enabled'))[:-29])
         resp.data = soup.prettify()
         return resp
     except:
