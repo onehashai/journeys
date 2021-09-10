@@ -40,7 +40,7 @@ class JourneyNotification(Notification):
         if not whatsapp_template:
             return
 
-        whatsapp_template = frappe.get_doc("Whatsapp Template", whatsapp_template)
+        whatsapp_template = frappe.get_doc("WhatsApp Template", whatsapp_template)
         template_parameters = frappe.render_template(self.message, context)
 
         params = json.loads(template_parameters)

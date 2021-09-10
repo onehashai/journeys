@@ -56,8 +56,8 @@
   {
    "fieldname": "whatsapp_map",
    "fieldtype": "Table",
-   "label": "Whatsapp Map",
-   "options": "Whatsapp Template Map"
+   "label": "WhatsApp Map",
+   "options": "WhatsApp Template Map"
   },
   {
    "fieldname": "header_link",
@@ -67,10 +67,10 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-08-06 14:01:09.911584",
+ "modified": "2021-09-10 12:35:33.558610",
  "modified_by": "Administrator",
  "module": "Journeys",
- "name": "Whatsapp Template",
+ "name": "WhatsApp Template",
  "owner": "Administrator",
  "permissions": [
   {

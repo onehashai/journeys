@@ -49,10 +49,10 @@ frappe.views.WhatsAppComposer = class {
 			'fields': [
 				{ 'label': __("To"), 'fieldname': 'mobile_no', 'fieldtype': 'MultiSelect', 'options': contact_list },
 				{
-					'label': __("Template"), 'fieldname': 'template', 'fieldtype': 'Link', 'options': "Whatsapp Template",
+					'label': __("Template"), 'fieldname': 'template', 'fieldtype': 'Link', 'options': "WhatsApp Template",
 					onchange: function (e) {
 						if(this.value){
-						frappe.db.get_doc("Whatsapp Template", this.value)
+						frappe.db.get_doc("WhatsApp Template", this.value)
 							.then((data) => {
 								counter += 1
 								if (counter == 1) {
@@ -185,7 +185,7 @@ frappe.views.WhatsAppComposer = class {
 			no_submit_on_enter: true,
 			size: 'large',
 			minimizable: true,
-			title: ("Send Whatsapp Message"),
+			title: ("Send WhatsApp Message"),
 		});
 
 		d.show();
