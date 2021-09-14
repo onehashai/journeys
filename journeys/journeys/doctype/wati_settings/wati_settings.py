@@ -75,6 +75,7 @@ def send_template_message(doc, whatsapp_numbers, broadcast_name, template_name, 
 
 		whatsapp_numbers = set(whatsapp_numbers)
 		result = False
+		failed_nums = []
 		for number in whatsapp_numbers:
 			if not number:
 				continue
@@ -97,7 +98,8 @@ def send_template_message(doc, whatsapp_numbers, broadcast_name, template_name, 
 
 			if response_text.get("result") in ["success", "true", True]:
 				if response_text.get("contact").get("contactStatus") == "INVALID":
-					return [False, "Invalid WhatsApp Contact"]
+					failed_nums.append(number)
+
 				# add comments if sent from doctype
 				if isinstance(doc, string_types):
 					doc = json.loads(doc)
@@ -126,7 +128,8 @@ def send_template_message(doc, whatsapp_numbers, broadcast_name, template_name, 
 				frappe.db.commit()
 				frappe.log_error(response.text, "WhatsApp Message Failed")
 				result = False
-
+		if failed_nums:
+			return [False, "WhatsApp Message Failed for these numbers: {}".format(failed_nums)]
 		return [True, "WhatsApp Message Sent Successfully"] if result else [False, ""]
 	except:
 		frappe.log_error(frappe.get_traceback(), "WhatsApp Message Errored")
@@ -287,7 +290,7 @@ def add_contact(number=None):
 		
 		contact_list = list(set([x.get("parent") for x in frappe.get_list('Contact Phone', filters={'phone': number}, fields=['parent'])]))
 		if not contact_list:
-			return [False, "Contact {} not found".format(number)]
+			return [False, "This Contact {} not found in 'Contact Phone'. Please add it in the System first".format(number)]
 		
 		contact_doc = frappe.get_doc("Contact", contact_list[0])
 		if not contact_doc:
