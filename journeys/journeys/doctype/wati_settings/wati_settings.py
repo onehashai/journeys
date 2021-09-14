@@ -98,6 +98,7 @@ def send_template_message(doc, whatsapp_numbers, broadcast_name, template_name, 
 
 			if response_text.get("result") in ["success", "true", True]:
 				if response_text.get("contact").get("contactStatus") == "INVALID":
+					frappe.msgprint("Invalid WhatsApp Contact {}".format(number))
 					failed_nums.append(number)
 
 				# add comments if sent from doctype
@@ -290,7 +291,7 @@ def add_contact(number=None):
 		
 		contact_list = list(set([x.get("parent") for x in frappe.get_list('Contact Phone', filters={'phone': number}, fields=['parent'])]))
 		if not contact_list:
-			return [False, "This Contact {} not found in 'Contact Phone'. Please add it in the System first".format(number)]
+			return [False, "This Contact {} not found in OneHash <a href='/app/contact/'>Contact list</a>.".format(number)]
 		
 		contact_doc = frappe.get_doc("Contact", contact_list[0])
 		if not contact_doc:
