@@ -7,6 +7,13 @@ import re
 def send_subscription(**kwargs):
     try:
         if "System Manager" in frappe.get_roles(frappe.session.user):
+            if not frappe.db.exists("Lead Source", "Facebook"):
+                lead_source = frappe.get_doc({
+                    "doctype":"Lead Source",
+                    "source_name":"Facebook"
+                })
+                lead_source.insert(ignore_permissions=True)
+                frappe.db.commit()
             config = frappe.get_site_config()
             facebook_config = config.get("facebook_config") if config.get("facebook_config") else {}
             master_subscription_endpoint = facebook_config.get("master_subscription_endpoint")

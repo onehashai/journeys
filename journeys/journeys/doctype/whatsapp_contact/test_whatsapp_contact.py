@@ -6,5 +6,5 @@ from __future__ import unicode_literals
 # import frappe
 import unittest
 
-class TestWhatsappContact(unittest.TestCase):
+class TestWhatsAppContact(unittest.TestCase):
 	pass

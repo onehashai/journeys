@@ -6,6 +6,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "enable",
   "template_name",
   "broadcast_name",
   "category",
@@ -21,56 +22,72 @@
    "fieldname": "template_name",
    "fieldtype": "Data",
    "label": "Template Name",
+   "read_only": 1,
    "unique": 1
   },
   {
    "fieldname": "broadcast_name",
    "fieldtype": "Data",
-   "label": "Broadcast Name"
+   "label": "Broadcast Name",
+   "read_only": 1
   },
   {
    "fieldname": "category",
    "fieldtype": "Data",
-   "label": "Category"
+   "label": "Category",
+   "read_only": 1
   },
   {
    "fieldname": "message_body",
    "fieldtype": "Small Text",
-   "label": "Message Body"
+   "label": "Message Body",
+   "read_only": 1
   },
   {
    "fieldname": "header_type",
    "fieldtype": "Data",
-   "label": "Header Type"
+   "label": "Header Type",
+   "read_only": 1
   },
   {
    "fieldname": "header",
    "fieldtype": "Small Text",
-   "label": "Header Text"
+   "label": "Header Text",
+   "read_only": 1
   },
   {
    "fieldname": "language_code",
    "fieldtype": "Data",
-   "label": "Language Code"
+   "label": "Language Code",
+   "read_only": 1
   },
   {
    "fieldname": "whatsapp_map",
    "fieldtype": "Table",
-   "label": "Whatsapp Map",
-   "options": "Whatsapp Template Map"
+   "label": "WhatsApp Map",
+   "options": "WhatsApp Template Map",
+   "read_only": 1
   },
   {
    "fieldname": "header_link",
    "fieldtype": "Data",
-   "label": "Header Link"
+   "label": "Header Link",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "enable",
+   "fieldtype": "Check",
+   "label": "Enable"
   }
  ],
+ "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-08-06 14:01:09.911584",
+ "modified": "2021-09-14 11:46:20.820651",
  "modified_by": "Administrator",
  "module": "Journeys",
- "name": "Whatsapp Template",
+ "name": "WhatsApp Template",
  "owner": "Administrator",
  "permissions": [
   {

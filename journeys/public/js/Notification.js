@@ -20,7 +20,7 @@ frappe.ui.form.on('Notification', {
 		if (frm.doc.channel === 'WhatsApp') {
 
 			if (frm.doc.whatsapp_template != undefined) {
-				frappe.db.get_doc("Whatsapp Template", frm.doc.whatsapp_template)
+				frappe.db.get_doc("WhatsApp Template", frm.doc.whatsapp_template)
 					.then((data) => {
 						frm.fields_list = data.whatsapp_map
 						if (frm.doc.message == "" || frm.doc.message == "Add your message here") {

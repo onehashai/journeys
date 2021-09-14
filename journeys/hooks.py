@@ -34,7 +34,8 @@ app_include_js = "/assets/js/journeys.min.js"
 doctype_js = {
     'Lead': 'public/js/lead.js',
 	'User': 'public/js/user.js',
-	"Notification" : "public/js/Notification.js"
+	"Notification" : "public/js/Notification.js",
+	"Web Form": "public/js/web_form.js"
 }
 # Home Pages
 # ----------

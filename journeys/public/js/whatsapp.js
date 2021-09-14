@@ -15,7 +15,7 @@ frappe.views.WhatsAppComposer = class {
 		let contact_dict = {};
 		let contact_list = [];
 		let contacts = [];
-		cur_frm.meta.fields.forEach((e) => { if (e.options == "Phone") { contact_dict[e.fieldname] = e.label } })
+		cur_frm.meta.fields.forEach((e) => { if (e.options == "Phone" || e.fieldname == "contact_phone" || e.fieldname == "contact_mobile") { contact_dict[e.fieldname] = e.label } })
 		let doc_field_list = [{
 			"value": "Attachment",
 			"description": "Attach a file"
@@ -49,9 +49,20 @@ frappe.views.WhatsAppComposer = class {
 			'fields': [
 				{ 'label': __("To"), 'fieldname': 'mobile_no', 'fieldtype': 'MultiSelect', 'options': contact_list },
 				{
-					'label': __("Template"), 'fieldname': 'template', 'fieldtype': 'Link', 'options': "Whatsapp Template",
+					'label': __("Template"), 
+					'fieldname': 'template', 
+					'fieldtype': 'Link', 
+					'options': "WhatsApp Template", 
+					"get_query": function () {
+						return {
+							filters: {
+								"enable": 1
+							}
+						};
+					},
 					onchange: function (e) {
-						frappe.db.get_doc("Whatsapp Template", this.value)
+						if(this.value){
+						frappe.db.get_doc("WhatsApp Template", this.value)
 							.then((data) => {
 								counter += 1
 								if (counter == 1) {
@@ -89,11 +100,7 @@ frappe.views.WhatsAppComposer = class {
 											"fieldname": e.field_name + "_attachment",
 											"hidden": true
 										})
-										d.get_field(e.field_name + "_attachment").df.options = {
-											restrictions: {
-												allowed_file_types: ['.csv']
-											}
-										};
+										
 										d.get_field(e.field_name + "_attachment").refresh()
 
 										// make print_format field for every field
@@ -144,7 +151,7 @@ frappe.views.WhatsAppComposer = class {
 
 									})
 									let header_html = "";
-									if (data.header_type != 'text' && data.header_type != '') {
+									if (!["text", "", undefined, null].includes(data.header_type)) {
 										header_html = data.header_type.charAt(0).toUpperCase() + data.header_type.slice(1) + ` Attachment: <a href="` + data.header_link + `">` + data.header_link + `</a><br><br>`
 
 									}
@@ -159,7 +166,7 @@ frappe.views.WhatsAppComposer = class {
 								}
 							});
 					}
-				},
+				}},
 
 				{ 'label': __("Content"), 'fieldname': 'content', 'fieldtype': 'HTML' },
 
@@ -184,7 +191,7 @@ frappe.views.WhatsAppComposer = class {
 			no_submit_on_enter: true,
 			size: 'large',
 			minimizable: true,
-			title: ("Send Whatsapp Message"),
+			title: ("Send WhatsApp Message"),
 		});
 
 		d.show();
@@ -197,6 +204,11 @@ function verify(d, context, data, header_html) {
 		if ((d.get_field(key).input.value).replace(", ", "") == "Attachment") {
 			if (d.get_field(key + "_attachment").value == null || d.get_field(key + "_attachment").value.length == 0) {
 				return
+			}
+			else if(d.get_field(key + "_attachment").value && d.get_field(key + "_attachment").value.includes("/private/")){
+				d.get_field(key + "_attachment").value = ""
+				d.get_field(key + "_attachment").refresh()
+				frappe.msgprint("Attachment File can't be Private")
 			}
 			else if (d.get_field(key + "_attachment").value && d.get_field(key + "_attachment").value.includes("https://")) {
 				context[key] = (d.get_field(key + "_attachment").value)

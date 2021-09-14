@@ -79,7 +79,7 @@ def send_template_message(doc, whatsapp_numbers, broadcast_name, template_name, 
 			if not number:
 				continue
 
-			if not frappe.db.exists("Whatsapp Contact", number.replace("+","")):
+			if not frappe.db.exists("WhatsApp Contact", number.replace("+","")):
 				contact_resp = add_contact(number)
 				if contact_resp[0] != True:
 					if contact_resp[1]:
@@ -91,7 +91,7 @@ def send_template_message(doc, whatsapp_numbers, broadcast_name, template_name, 
 
 			response_text = json.loads(response.text)
 			header_html = ""
-			temp = frappe.get_doc("Whatsapp Template", template_name)
+			temp = frappe.get_doc("WhatsApp Template", template_name)
 			if temp.header_type not in ["text", ""]:
 				header_html = temp.header_type[0].upper() + temp.header_type[1:] + " Attachment: " + temp.header_link + " "
 
@@ -100,10 +100,10 @@ def send_template_message(doc, whatsapp_numbers, broadcast_name, template_name, 
 				if isinstance(doc, string_types):
 					doc = json.loads(doc)
 					doc = frappe.get_doc(doc.get("doctype"), doc.get("docname"))
-				doc.add_comment('Comment', text=frappe.render_template(frappe.get_doc("Whatsapp Template", template_name).message_body, template_parameters))
+				doc.add_comment('Comment', text=frappe.render_template(frappe.get_doc("WhatsApp Template", template_name).message_body, template_parameters))
 				# add whatsapp log
 				frappe.get_doc({
-					"doctype":"Whatsapp Message Log",
+					"doctype":"WhatsApp Message Log",
 					"to": number,
 					"status": "Sent",
 					"message": frappe.render_template(header_html + "\n\n" + temp.message_body, template_parameters),
@@ -115,19 +115,19 @@ def send_template_message(doc, whatsapp_numbers, broadcast_name, template_name, 
 			else:
 				# add whatsapp log
 				frappe.get_doc({
-					"doctype":"Whatsapp Message Log",
+					"doctype":"WhatsApp Message Log",
 					"to": number,
 					"status": "Failed",
 					"message": frappe.render_template(header_html + "\n\n" + temp.message_body, template_parameters),
 					"response_json": response.text
 				}).insert()
 				frappe.db.commit()
-				frappe.log_error(response.text, "Whatsapp Message Failed")
+				frappe.log_error(response.text, "WhatsApp Message Failed")
 				result = False
 
-		return [True, "Whatsapp Message Sent Successfully"] if result else [False, ""]
+		return [True, "WhatsApp Message Sent Successfully"] if result else [False, ""]
 	except:
-		frappe.log_error(frappe.get_traceback(), "Whatsapp Message Errored")
+		frappe.log_error(frappe.get_traceback(), "WhatsApp Message Errored")
 
 def get_whatsapp_messages():
 	pass
@@ -141,13 +141,15 @@ def get_message_templates():
 		url = process_url("getMessageTemplates/")
 		if not url:
 			return [False, "Wati Service Url is not Configured"]
-				
+		
+		max_num = frappe.db.get_single_value("Wati Settings", "number_of_templates") or 250
+
 		token = frappe.db.get_single_value("Wati Settings", "access_token")
 		if "Bearer " not in token:
 			token = "Bearer " + token
 
 		broadcast_name = frappe.db.get_single_value("Wati Settings", "broadcast_name")
-		payload={'pageSize': str(frappe.db.get_single_value("Wati Settings", "number_of_templates") or 250),
+		payload={'pageSize': "250",
 		'pageNumber': '1'}
 		files=[
 
@@ -156,23 +158,35 @@ def get_message_templates():
 		'Authorization': token
 		}
 
-		response = requests.request("GET", url, headers=headers, data=payload, files=files)
-		saved_templates = [x.name for x in frappe.get_list("Whatsapp Template")]
+		saved_templates = [x.name for x in frappe.get_list("WhatsApp Template")]
+		num_saved_templates = len(saved_templates)
 
+		if num_saved_templates >= max_num:
+			return [False, "Please Increase Number of Templates Limit"]
+
+		response = requests.request("GET", url, headers=headers, data=payload, files=files)
+		
 		if response.text:
 			response_text = json.loads(response.text)
 			if response_text.get("result") in ["success", "true", True]:
 				for template in response_text.get("messageTemplates"):
-					if template.get("status") == "APPROVED" and template.get("elementName") not in saved_templates:
+					if template.get("status") == "APPROVED" and template.get("elementName") not in saved_templates and num_saved_templates < max_num:
+						num_saved_templates += 1
+						if template.get("header") and template.get("header", {}).get("link", {}):
+							header_link = template.get("header").get("link")
+						elif template.get("header") and template.get("header", {}).get("mediaFromPC", ""):
+							header_link = template.get("header").get("mediaFromPC")
+						else:
+							header_link = ""
 						wt_doc = frappe.get_doc({
-							"doctype": "Whatsapp Template",
+							"doctype": "WhatsApp Template",
 							"broadcast_name": broadcast_name or "Broadcast",
 							"template_name": template.get("elementName"),
 							"category": template.get("category"),
 							"language_code": template.get("language").get("value", None),
 							"header_type": template.get("header").get("typeString", None) if template.get("header") else "",
 							"header_text": template.get("header").get("text", None) if template.get("header") else "",
-							"header_link": template.get("header").get("link", None) if template.get("header") and template.get("header").get("link") else template.get("header").get("mediaFromPC", ""),
+							"header_link": header_link,
 							"message_body": template.get("bodyOriginal") if template.get("type") == "template" else template.get("hsmOriginal")
 						})
 
@@ -189,16 +203,16 @@ def get_message_templates():
 						wt_doc.insert()
 
 				frappe.db.commit()
-				return [True, "Whatsapp Templates Fetched Successfully"]
+				return [True, "WhatsApp Templates Fetched Successfully"]
 			else:
-				frappe.log_error(response.text, "Whatsapp Templates Failed")
-				return [False, "Whatsapp Templates Failed to Fetch"]
+				frappe.log_error(response.text, "WhatsApp Templates Failed")
+				return [False, "WhatsApp Templates Failed to Fetch"]
 		else:
-			frappe.log_error(response, "Whatsapp Templates Failed")
-			return [False, "Whatsapp Templates Failed to Fetch"]
+			frappe.log_error(response, "WhatsApp Templates Failed")
+			return [False, "WhatsApp Templates Failed to Fetch"]
 	except:
-		frappe.log_error(frappe.get_traceback(), "Whatsapp Templates Errored")
-		return [False, "Whatsapp Templates Failed to Fetch"]
+		frappe.log_error(frappe.get_traceback(), "WhatsApp Templates Errored")
+		return [False, "WhatsApp Templates Failed to Fetch"]
 
 @frappe.whitelist()
 def get_contacts():
@@ -228,12 +242,12 @@ def get_contacts():
 		if response.text:
 			response_text = json.loads(response.text)
 			if response_text.get("result") in ["success", "true", True]:
-				saved_contacts = [x.name for x in frappe.get_list("Whatsapp Contact")]
+				saved_contacts = [x.name for x in frappe.get_list("WhatsApp Contact")]
 				contact_list = response_text.get("contact_list")
 				for contact in contact_list:
 					if contact.get("phone") not in saved_contacts:
 						frappe.get_doc({
-							"doctype":"Whatsapp Contact",
+							"doctype":"WhatsApp Contact",
 							"contact": contact.get("phone"),
 							"full_name": contact.get("fullName")
 						}).insert(ignore_permissions=True)
@@ -241,13 +255,13 @@ def get_contacts():
 				frappe.db.commit()
 				return [True, "WhatsApp Contacts Fetched Successfully"]
 			else:
-				frappe.log_error(response.text, "Whatsapp Contact Fetch Failed")
+				frappe.log_error(response.text, "WhatsApp Contact Fetch Failed")
 				return [False, "WhatsApp Contacts Failed to Fetch"]
 		else:
-			frappe.log_error(response, "Whatsapp Contact Fetch Failed")
+			frappe.log_error(response, "WhatsApp Contact Fetch Failed")
 			return [False, "WhatsApp Contacts Failed to Fetch"]
 	except:
-		frappe.log_error(frappe.get_traceback(), "Whatsapp Contact Fetch Errored")
+		frappe.log_error(frappe.get_traceback(), "WhatsApp Contact Fetch Errored")
 		return [False, "WhatsApp Contacts Failed to Fetch"]
 
 def add_contact(number=None):
@@ -297,20 +311,20 @@ def add_contact(number=None):
 			response_text = json.loads(response.text)
 			if response_text.get("result") in ["success", "true", True]:
 				frappe.get_doc({
-							"doctype":"Whatsapp Contact",
+							"doctype":"WhatsApp Contact",
 							"contact": number,
 							"full_name": full_name
 						}).insert(ignore_permissions=True)
 				frappe.db.commit()
 				return [True, ""]
 			else:
-				frappe.log_error(response.text, "Whatsapp Contact Failed")
+				frappe.log_error(response.text, "WhatsApp Contact Failed")
 				return [False, ""]
 		else:
-			frappe.log_error(response.text, "Whatsapp Contact Failed")
+			frappe.log_error(response.text, "WhatsApp Contact Failed")
 			return [False, ""]
 	except:
-		frappe.log_error(frappe.get_traceback(), "Whatsapp Contact Errored")
+		frappe.log_error(frappe.get_traceback(), "WhatsApp Contact Errored")
 		return [False, ""]
 
 def process_url(method):

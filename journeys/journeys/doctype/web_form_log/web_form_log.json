@@ -1,0 +1,109 @@
+{
+ "actions": [],
+ "creation": "2021-08-28 14:05:35.745717",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "form",
+  "doc_type",
+  "module",
+  "geo_location",
+  "city",
+  "region",
+  "country",
+  "ip_address",
+  "referer"
+ ],
+ "fields": [
+  {
+   "fieldname": "form",
+   "fieldtype": "Link",
+   "label": "Form",
+   "options": "Web Form",
+   "read_only": 1
+  },
+  {
+   "fieldname": "doc_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "DocType",
+   "read_only": 1
+  },
+  {
+   "fieldname": "module",
+   "fieldtype": "Data",
+   "label": "Module",
+   "read_only": 1
+  },
+  {
+   "fieldname": "geo_location",
+   "fieldtype": "Data",
+   "label": "Geo Location",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ip_address",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "IP Address",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "referer",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Referer",
+   "read_only": 1
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "City",
+   "read_only": 1
+  },
+  {
+   "fieldname": "region",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Region",
+   "read_only": 1
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Country",
+   "read_only": 1
+  }
+ ],
+ "in_create": 1,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2021-09-14 10:17:38.800439",
+ "modified_by": "Administrator",
+ "module": "Journeys",
+ "name": "Web Form Log",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
