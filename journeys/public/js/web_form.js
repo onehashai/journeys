@@ -2,8 +2,6 @@ frappe.ui.form.on('Web Form', {
 
     onload: function(frm) {
 		if (frm.doc.is_embeddable == 1) {
-            frm.set_df_property('client_script', 'hidden', true);
-            frm.set_df_property('client_script_section', 'hidden', true);
             frm.set_df_property('sidebar_items', 'hidden', true);
             frm.set_df_property('sidebar_settings', 'hidden', true);
             frm.doc.show_sidebar=0
@@ -17,8 +15,6 @@ frappe.ui.form.on('Web Form', {
 	},
 	refresh: function(frm) {
         if (frm.doc.is_embeddable == 1) {
-            frm.set_df_property('client_script', 'hidden', true);
-            frm.set_df_property('client_script_section', 'hidden', true);
             frm.set_df_property('sidebar_items', 'hidden', true);
             frm.set_df_property('sidebar_settings', 'hidden', true);
             frm.doc.show_sidebar=0
@@ -38,8 +34,6 @@ frappe.ui.form.on('Web Form', {
 	disable_enable_fields: function (frm) {
 
         if (frm.doc.is_embeddable == 1) {
-            frm.set_df_property('client_script', 'hidden', true);
-            frm.set_df_property('client_script_section', 'hidden', true);
             frm.set_df_property('sidebar_items', 'hidden', true);
             frm.set_df_property('sidebar_settings', 'hidden', true);
             frm.doc.show_sidebar=0
@@ -53,8 +47,6 @@ frappe.ui.form.on('Web Form', {
         }
         if(frm.doc.is_embeddable == 0){
 
-            frm.set_df_property('client_script', 'hidden', false);
-            frm.set_df_property('client_script_section', 'hidden', false);
             frm.set_df_property('sidebar_items', 'hidden', false);
             frm.set_df_property('sidebar_settings', 'hidden', false);
             frm.set_df_property('login_required', 'hidden', false);

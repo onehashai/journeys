@@ -141,13 +141,15 @@ def get_message_templates():
 		url = process_url("getMessageTemplates/")
 		if not url:
 			return [False, "Wati Service Url is not Configured"]
-				
+		
+		max_num = frappe.db.get_single_value("Wati Settings", "number_of_templates") or 250
+
 		token = frappe.db.get_single_value("Wati Settings", "access_token")
 		if "Bearer " not in token:
 			token = "Bearer " + token
 
 		broadcast_name = frappe.db.get_single_value("Wati Settings", "broadcast_name")
-		payload={'pageSize': str(frappe.db.get_single_value("Wati Settings", "number_of_templates") or 250),
+		payload={'pageSize': "250",
 		'pageNumber': '1'}
 		files=[
 
@@ -156,14 +158,20 @@ def get_message_templates():
 		'Authorization': token
 		}
 
-		response = requests.request("GET", url, headers=headers, data=payload, files=files)
 		saved_templates = [x.name for x in frappe.get_list("WhatsApp Template")]
+		num_saved_templates = len(saved_templates)
 
+		if num_saved_templates >= max_num:
+			return [False, "Please Increase Number of Templates Limit"]
+
+		response = requests.request("GET", url, headers=headers, data=payload, files=files)
+		
 		if response.text:
 			response_text = json.loads(response.text)
 			if response_text.get("result") in ["success", "true", True]:
 				for template in response_text.get("messageTemplates"):
-					if template.get("status") == "APPROVED" and template.get("elementName") not in saved_templates:
+					if template.get("status") == "APPROVED" and template.get("elementName") not in saved_templates and num_saved_templates < max_num:
+						num_saved_templates += 1
 						if template.get("header") and template.get("header", {}).get("link", {}):
 							header_link = template.get("header").get("link")
 						elif template.get("header") and template.get("header", {}).get("mediaFromPC", ""):

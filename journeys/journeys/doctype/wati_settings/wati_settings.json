@@ -21,25 +21,30 @@
    "label": "Enabled"
   },
   {
+   "description": "API EndPoint Url is provided by Wati CRM",
    "fieldname": "api_endpoint",
    "fieldtype": "Data",
    "label": "API Endpoint"
   },
   {
+   "description": "Access Token is the authorisation token provided by Wati CRM",
    "fieldname": "access_token",
    "fieldtype": "Small Text",
    "label": "Access Token"
   },
   {
+   "default": "Broadcast",
+   "description": "This broadcast name will be used in sending WhatsApp template message",
    "fieldname": "broadcast_name",
    "fieldtype": "Data",
    "label": "Broadcast Name"
   },
   {
+   "description": "These WhatsApp Contact Parameters are optional and used to provide attributes/tags to the Contacts saved in Wati CRM",
    "fieldname": "add_contact_parameters",
    "fieldtype": "Table",
    "label": "Add Contact Parameters",
-   "options": "SMS Parameter"
+   "options": "WhatsApp Contact Parameter"
   },
   {
    "description": "Indicates the number of WhatsApp templates to fetch from Wati",
@@ -57,7 +62,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-08-10 12:44:31.433163",
+ "modified": "2021-09-14 11:29:18.178931",
  "modified_by": "Administrator",
  "module": "Journeys",
  "name": "Wati Settings",

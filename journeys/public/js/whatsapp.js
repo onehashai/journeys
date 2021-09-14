@@ -15,7 +15,7 @@ frappe.views.WhatsAppComposer = class {
 		let contact_dict = {};
 		let contact_list = [];
 		let contacts = [];
-		cur_frm.meta.fields.forEach((e) => { if (e.options == "Phone") { contact_dict[e.fieldname] = e.label } })
+		cur_frm.meta.fields.forEach((e) => { if (e.options == "Phone" || e.fieldname == "contact_phone" || e.fieldname == "contact_mobile") { contact_dict[e.fieldname] = e.label } })
 		let doc_field_list = [{
 			"value": "Attachment",
 			"description": "Attach a file"
@@ -49,7 +49,17 @@ frappe.views.WhatsAppComposer = class {
 			'fields': [
 				{ 'label': __("To"), 'fieldname': 'mobile_no', 'fieldtype': 'MultiSelect', 'options': contact_list },
 				{
-					'label': __("Template"), 'fieldname': 'template', 'fieldtype': 'Link', 'options': "WhatsApp Template",
+					'label': __("Template"), 
+					'fieldname': 'template', 
+					'fieldtype': 'Link', 
+					'options': "WhatsApp Template", 
+					"get_query": function () {
+						return {
+							filters: {
+								"enable": 1
+							}
+						};
+					},
 					onchange: function (e) {
 						if(this.value){
 						frappe.db.get_doc("WhatsApp Template", this.value)
@@ -194,6 +204,11 @@ function verify(d, context, data, header_html) {
 		if ((d.get_field(key).input.value).replace(", ", "") == "Attachment") {
 			if (d.get_field(key + "_attachment").value == null || d.get_field(key + "_attachment").value.length == 0) {
 				return
+			}
+			else if(d.get_field(key + "_attachment").value && d.get_field(key + "_attachment").value.includes("/private/")){
+				d.get_field(key + "_attachment").value = ""
+				d.get_field(key + "_attachment").refresh()
+				frappe.msgprint("Attachment File can't be Private")
 			}
 			else if (d.get_field(key + "_attachment").value && d.get_field(key + "_attachment").value.includes("https://")) {
 				context[key] = (d.get_field(key + "_attachment").value)

@@ -20,55 +20,74 @@
    "fieldname": "form",
    "fieldtype": "Link",
    "label": "Form",
-   "options": "Web Form"
+   "options": "Web Form",
+   "read_only": 1
   },
   {
    "fieldname": "doc_type",
    "fieldtype": "Data",
-   "label": "DocType"
+   "in_list_view": 1,
+   "label": "DocType",
+   "read_only": 1
   },
   {
    "fieldname": "module",
    "fieldtype": "Data",
-   "label": "Module"
+   "label": "Module",
+   "read_only": 1
   },
   {
    "fieldname": "geo_location",
    "fieldtype": "Data",
-   "label": "Geo Location"
+   "label": "Geo Location",
+   "read_only": 1
   },
   {
    "fieldname": "ip_address",
    "fieldtype": "Data",
-   "label": "IP Address"
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "IP Address",
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "referer",
    "fieldtype": "Data",
-   "label": "Referer"
+   "in_list_view": 1,
+   "label": "Referer",
+   "read_only": 1
   },
   {
    "fieldname": "city",
    "fieldtype": "Data",
-   "label": "City"
+   "in_list_view": 1,
+   "label": "City",
+   "read_only": 1
   },
   {
    "fieldname": "region",
    "fieldtype": "Data",
-   "label": "Region"
+   "in_list_view": 1,
+   "label": "Region",
+   "read_only": 1
   },
   {
    "fieldname": "country",
    "fieldtype": "Data",
-   "label": "Country"
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Country",
+   "read_only": 1
   }
  ],
+ "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-09-08 21:55:03.649977",
+ "modified": "2021-09-14 10:17:38.800439",
  "modified_by": "Administrator",
  "module": "Journeys",
- "name": "Web Form Record",
+ "name": "Web Form Log",
  "owner": "Administrator",
  "permissions": [
   {

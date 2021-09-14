@@ -73,7 +73,7 @@ def forms(path=None, referer=None):
             resp.data = soup.prettify()
             resp.headers["X-Frame-Options"] = "ALLOWALL"
             return resp
-        doc_list_len = len(frappe.get_all("Web Form Record", {"form": path}))
+        doc_list_len = len(frappe.get_all("Web Form Log", {"form": path}))
         if form.restrict_number_of_submission not in [0,""] and form.restrict_number_of_submission <= doc_list_len:
             resp = render("/message", http_status_code=200)
             data = resp.data
@@ -86,7 +86,7 @@ def forms(path=None, referer=None):
             resp.headers["X-Frame-Options"] = "ALLOWALL"
             return resp
         if frappe.local.request_ip:
-            doc_list_len = len(frappe.get_all("Web Form Record", {"form": path, "ip_address": frappe.local.request_ip}))
+            doc_list_len = len(frappe.get_all("Web Form Log", {"form": path, "ip_address": frappe.local.request_ip}))
             if form.restrict_submission_per_ip not in [0, ""] and form.restrict_submission_per_ip <= doc_list_len:
                 resp = render("/message", http_status_code=200)
                 data = resp.data
@@ -110,7 +110,7 @@ def forms(path=None, referer=None):
                 loc = data.get("loc")
 
         record = frappe.get_doc({
-            "doctype": "Web Form Record",
+            "doctype": "Web Form Log",
             "form": path,
             "doc_type": form.doc_type,
             "module": form.module,
@@ -138,7 +138,7 @@ def forms(path=None, referer=None):
                 query = parse_qs(o.query)
                 path = query.get("path")[0] if query.get("path") else ""
 
-        resp = render("/"+path, http_status_code=200)
+        resp = render("/"+form.route, http_status_code=200)
         resp.headers["X-Frame-Options"] = "ALLOWALL"
 
         data = resp.data
