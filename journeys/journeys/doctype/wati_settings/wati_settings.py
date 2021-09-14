@@ -130,6 +130,7 @@ def send_template_message(doc, whatsapp_numbers, broadcast_name, template_name, 
 				frappe.log_error(response.text, "WhatsApp Message Failed")
 				result = False
 		if failed_nums:
+			frappe.msgprint("WhatsApp Message Failed for these numbers: {}".format(failed_nums))
 			return [False, "WhatsApp Message Failed for these numbers: {}".format(failed_nums)]
 		return [True, "WhatsApp Message Sent Successfully"] if result else [False, ""]
 	except:
