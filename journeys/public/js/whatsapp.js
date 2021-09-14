@@ -47,7 +47,7 @@ frappe.views.WhatsAppComposer = class {
 		}
 		var d = new frappe.ui.Dialog({
 			'fields': [
-				{ 'label': __("To"), 'fieldname': 'mobile_no', 'fieldtype': 'MultiSelect', 'options': contact_list },
+				{ 'label': __("To"), 'fieldname': 'mobile_no', 'fieldtype': 'MultiSelect', 'options': contact_list, 'description': "<strong>Note</strong>: Please enter contact with Country Code" },
 				{
 					'label': __("Template"), 
 					'fieldname': 'template', 
@@ -56,7 +56,7 @@ frappe.views.WhatsAppComposer = class {
 					"get_query": function () {
 						return {
 							filters: {
-								"enable": 1
+								"enabled": 1
 							}
 						};
 					},

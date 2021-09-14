@@ -99,8 +99,8 @@ def forms(path=None, referer=None):
                 resp.headers["X-Frame-Options"] = "ALLOWALL"
                 return resp
         city = region = country = loc = None
-        if form.collect_geo_location:
-            url = "https://ipinfo.io/" + frappe.local.request_ip if form.collect_ip_address else ""
+        if form.collect_geo_location and frappe.local.request_ip:
+            url = "https://ipinfo.io/" + str(frappe.local.request_ip)
             res = requests.get(url)
             if res.status_code in [200, "200"]:
                 data = json.loads(res.text)

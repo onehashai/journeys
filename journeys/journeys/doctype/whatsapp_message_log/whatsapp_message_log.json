@@ -14,27 +14,31 @@
   {
    "fieldname": "message",
    "fieldtype": "Small Text",
-   "label": "Message"
+   "label": "Message",
+   "read_only": 1
   },
   {
    "fieldname": "to",
    "fieldtype": "Data",
-   "label": "To"
+   "label": "To",
+   "read_only": 1
   },
   {
    "fieldname": "status",
    "fieldtype": "Data",
-   "label": "Status"
+   "label": "Status",
+   "read_only": 1
   },
   {
    "fieldname": "response_json",
    "fieldtype": "Small Text",
-   "label": "Response Json"
+   "label": "Response Json",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-09-10 21:37:10.174697",
+ "modified": "2021-09-14 16:43:04.650477",
  "modified_by": "Administrator",
  "module": "Journeys",
  "name": "WhatsApp Message Log",

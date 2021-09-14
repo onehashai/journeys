@@ -96,6 +96,8 @@ def send_template_message(doc, whatsapp_numbers, broadcast_name, template_name, 
 				header_html = temp.header_type[0].upper() + temp.header_type[1:] + " Attachment: " + temp.header_link + " "
 
 			if response_text.get("result") in ["success", "true", True]:
+				if response_text.get("contact").get("contactStatus") == "INVALID":
+					return [False, "Invalid WhatsApp Contact"]
 				# add comments if sent from doctype
 				if isinstance(doc, string_types):
 					doc = json.loads(doc)
