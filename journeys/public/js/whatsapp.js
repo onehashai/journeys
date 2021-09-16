@@ -181,6 +181,7 @@ frappe.views.WhatsAppComposer = class {
 							show_alert("WhatsApp message sent successfully");
 							d.hide();
 						}else{
+							d.hide();
 							show_alert(r.message[1] || "An error occured. Please Retry")
 						}
 					}
