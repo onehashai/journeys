@@ -55,6 +55,14 @@ frappe.ui.form.on('Notification', {
 							// action to perform if Yes is selected
 							frm.doc.message = JSON.stringify(context)
 							refresh_field("message")
+							for (const [k, value] of Object.entries(context)) {
+								frm.doc.whatsapp_parameter.forEach((f) =>{
+									if(f.parameter == k){
+										f.value = value
+									}
+								})
+							}
+							frm.refresh_fields("whatsapp_parameter");
 							frm.dirty()
 							d.hide()
 						}, () => {
@@ -196,7 +204,20 @@ frappe.ui.form.on('Notification', {
 							if (data.whatsapp_map.length > 0) {
 								param_html = `{`
 								data.whatsapp_map.forEach((e) => {
+									let check = false
 									param_html += `"` + e.field_name + `": "", `
+									if(cur_frm.is_new() != 1){
+									frm.doc.whatsapp_parameter.forEach((f) =>{
+										if(f.parameter == e.field_name){
+											check = true
+										}
+									})
+								}
+									if(check == false){
+										var childTable = cur_frm.add_child("whatsapp_parameter");
+										childTable.parameter= e.field_name
+										cur_frm.refresh_fields("whatsapp_parameter");
+									}
 								})
 								param_html = param_html.slice(0,-2)
 								param_html += `}`
@@ -214,12 +235,8 @@ frappe.ui.form.on('Notification', {
 
 						}
 
-						total_html = `<div class="card mb-3 h-100"><div class="card-body">` + header_html + data.message_body + `<br><br></div></div>`
-						template = `<h5 style='display: inline-block'>Warning:</h5><br>Only Use Pre-Approved WhatsApp Template. Message should be a dictionary of parameters and values for the selected template.
-								<h5>Message Example:</h5>
-								<pre>{"file_url":"https://www.onehash.ai/files/demo.pdf", "name": "{{ doc.name }}" }</pre>
-								<pre>Put "print_format" to attach Print Format of document. Also enable and select Print Format in Print Settings below.
-								</pre>`;
+						total_html = '<div class="card mb-3 h-100"><div class="card-body">' + header_html + data.message_body + '<br><br></div></div>'
+						template = '<h5 style="display: inline-block">Warning:</h5><br>Only Use Pre-Approved WhatsApp Template. Message should be a dictionary of parameters and values for the selected template.<h5>Message Example:</h5><pre>{"file_url":"https://www.onehash.ai/files/demo.pdf", "name": "{{ doc.name }}" }</pre><pre>Put "print_format" to attach Print Format of document. Also enable and select Print Format in Print Settings below.</pre>';
 						if (template) {
 							frm.set_df_property('message_examples', 'options', template);
 						}
