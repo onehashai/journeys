@@ -16,7 +16,9 @@ frappe.pages['usage-info'].on_page_load = function(wrapper) {
 				// TODO improve this
 				return;
 			}
-
+			let custom_domain = usage_info.custom_domain;
+			let domain_status = usage_info.domain_status;
+			let site_name = frappe.boot.sitename;
 			let limits = usage_info.limits;
 			let database_percent = (limits.space_usage.database_size / limits.space) * 100;
 			let files_percent = (limits.space_usage.files_size / limits.space) * 100;
@@ -44,7 +46,10 @@ frappe.pages['usage-info'].on_page_load = function(wrapper) {
 				files_percent,
 				backup_percent,
 				usage_message,
-				addon_limits
+				addon_limits,
+				custom_domain,
+				domain_status,
+				site_name
 			}))).appendTo(page.main);
 
 			let formdata = "site_name="+frappe.boot.sitename;
@@ -55,15 +60,15 @@ frappe.pages['usage-info'].on_page_load = function(wrapper) {
 				success: function(r) {
 					if(r.message){
 						let is_lifetime = false;
+						let coupon_count = r.message.length;
 						$.each(r.message,(key,value)=>{
-							console.log(value);
 							if(value.no_expiry){
 								is_lifetime = true;
 								$(page.main).find(".upgrade-message").addClass("hide");
 								return false;
 							}
 						});
-						$(page.main).find("#coupon-benefits").html(frappe.render_template("promocode",{coupon_codes:r.message}));
+						$(page.main).find("#coupon-benefits").html(frappe.render_template("promocode",{coupon_codes:r.message,coupon_count:coupon_count}));
 					}
 				},
 				error:function(xhr,status,error){
@@ -148,6 +153,98 @@ frappe.pages['usage-info'].on_page_load = function(wrapper) {
 
 					}
 				});
+			});
+
+			$("#add-domain-form").on("submit",function(){
+				let formdata = $(this).serialize();
+				
+				formdata += "&site_name="+frappe.boot.sitename+"&user="+frappe.session.user;
+				$(".custom-domain").prop("disabled",true);
+				$.ajax({
+					url:"https://"+master_domain+"/api/method/better_saas.better_saas.doctype.saas_site.saas_site.add_custom_domain",
+					data: formdata,
+					crossDomain:true,
+					success: function(r) {
+						if(r.message){
+							frappe.msgprint("Domain Added Successfully.<br>Please Add CNAME Record:"+frappe.boot.sitename);
+							$(".custom-domain").prop("disabled",false);
+							$("#domain-validation-feedback").removeClass("invalid-feedback");
+							$("#domain-validation-feedback").addClass("valid-feedback");
+							$("#domain-validation-feedback").text("Domain Added Successfully.<br>Please Add CNAME Record:"+frappe.boot.sitename);
+							$("#domain-validation-feedback").show();
+							setTimeout(() => {
+								window.location.reload();	
+							}, 2000);
+						}
+					},
+					error:function(xhr,status,error){
+						$(".custom-domain").prop("disabled",false);
+						$("#domain-validation-feedback").show();
+						message = JSON.parse(JSON.parse(xhr.responseJSON._server_messages)[0])["message"];
+						$("#domain-validation-feedback").text(message);
+					}
+				});
+			});
+
+			$("#verify-domain").off("click").on("click",function(){
+				let custom_domain = $(this).data("custom-domain");
+				let formdata = "custom_domain="+custom_domain+"&site_name="+frappe.boot.sitename+"&user="+frappe.session.user;
+				$(".custom-domain").prop("disabled",true);
+				$.ajax({
+					url:"https://"+master_domain+"/api/method/better_saas.better_saas.doctype.saas_site.saas_site.verify_domain",
+					data: formdata,
+					crossDomain:true,
+					success: function(r) {
+						if(r.message){
+							frappe.msgprint("Domain Verification Request Received.");
+							setTimeout(() => {
+								window.location.reload();	
+							}, 2000);
+						} else{
+							frappe.msgprint("Please Add CNAME Record to proceed.");
+						}
+					},
+					error:function(xhr,status,error){
+						$(".custom-domain").prop("disabled",false);
+						$("#domain-validation-feedback").show();
+						message = JSON.parse(JSON.parse(xhr.responseJSON._server_messages)[0])["message"];
+						$("#domain-validation-feedback").text(message);
+					}
+				});
+			});
+
+			$("#remove-domain").off("click").on("click",function(){
+				let custom_domain = $(this).data("custom-domain");
+				let formdata = "custom_domain="+custom_domain+"&site_name="+frappe.boot.sitename+"&user="+frappe.session.user;
+				
+				frappe.warn(
+					'Are you sure you want to continue?','This action is Irreversible, Users will not be able to access site with url: '+custom_domain,
+					()=>{
+						$(".custom-domain").prop("disabled",true);
+						$.ajax({
+							url:"https://"+master_domain+"/api/method/better_saas.better_saas.doctype.saas_site.saas_site.remove_custom_domain",
+							data: formdata,
+							crossDomain:true,
+							success: function(r) {
+								if(r.message){
+									frappe.msgprint("Custom Domain Removed Successfully.");
+									setTimeout(() => {
+										window.location.reload();	
+									}, 2000);
+								} else{
+									frappe.msgprint("Could not remove the domain.");
+								}
+							},
+							error:function(xhr,status,error){
+								message = JSON.parse(JSON.parse(xhr.responseJSON._server_messages)[0])["message"];
+								frappe.msgprint(message);
+							}
+						});
+					},
+					'Continue',
+					false
+				);
+				
 			});
 		}
 	});
