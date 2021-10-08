@@ -3,7 +3,7 @@ import frappe
 from frappe import _
 from frappe.utils import now_datetime, getdate, flt, cint, get_fullname
 from frappe.installer import update_site_config
-from frappe.utils.data import formatdate
+from frappe.utils.data import cstr, formatdate
 from frappe.utils.user import get_enabled_system_users,reset_simultaneous_sessions,get_system_managers
 from frappe.utils.__init__ import get_site_info
 import os, subprocess, json
@@ -129,7 +129,28 @@ def get_usage_info():
 
 	usage_info["addon_limits"] = get_addon_limits()
 	usage_info["master_domain"] = frappe.conf.get("master_site_domain")
+	usage_info["custom_domain"],usage_info["domain_status"] = get_custom_domain()
+	usage_info["site_name"] =cstr(frappe.local.site)
 	return usage_info
+
+def get_custom_domain():
+	domains = frappe.conf.get("domains")
+	if not domains:
+		return None,'Unverified'
+	verified=[]
+	unverified=[]
+	for domain in domains:
+		if(not ".onehash.ai" in domain and type(domain) is dict):
+			verified.append(domain["domain"])
+		elif not ".onehash.ai" in domain:
+			unverified.append(domain)
+
+	if len(verified)>0:
+		return verified[0],'Verified'
+	elif len(unverified)>0:
+		return unverified[0],'Unverified'
+	else:
+		return None,'Unverified'
 
 def get_upgrade_url(upgrade_url):
 	parts = urlsplit(upgrade_url)

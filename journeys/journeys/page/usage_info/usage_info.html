@@ -106,11 +106,50 @@
 	{% if addon_limits %}
 	
 	{% endif %}
-	<div class="card border-danger mb-3">
-		<div class="card-body">
-		  <h3 class="card-title text-danger">Delete Account</h3>
-		  <p class="card-text" id="warning-text"></p>
-		  <button id="delete-action" class="btn btn-outline-danger btn-sm"></button>
-		</div>
-	  </div>
+	<div class="row">
+		<aside class="col-md-8">
+			<div class="card border-primary mb-3 h-100">
+			  <div class="card-body">
+				<h4>Add Custom Domain</h4>
+				{% if not custom_domain %}
+				<form id="add-domain-form" action="javascript:;" >
+					<div class="form-group">
+						<div class="input-group"> <input type="text" class="form-control custom-domain" name="custom_domain" required placeholder="Enter Domain" >
+							<span class="input-group-append"> 
+								<button class="btn btn-apply btn-outline-primary coupon">Add Domain</button>
+							</span>
+						</div>
+						<div class="invalid-feedback" id="domain-validation-feedback"></div>
+					</div>
+				</form>
+				{% else %}
+					<p>Visit the admin console of your {{custom_domain}} registrar (the website you bought your domain from) and create <strong>CNAME</strong> Record 
+						<br><br>
+						<strong>CNAME:</strong>&nbsp;&nbsp;{{site_name}}<br>
+						<strong>Domain:</strong>&nbsp;&nbsp;{{custom_domain}}
+						{% if domain_status=="Verified" %}
+							<span class="indicator-pill whitespace-nowrap green"><span>{{domain_status}}</span></span>
+						{% else %}
+							<span class="indicator-pill whitespace-nowrap red"><span>{{domain_status}}</span></span>
+						{% endif %}
+						{% if domain_status=="Unverified" %}
+							<button id="verify-domain" data-custom-domain="{{custom_domain}}" class="btn btn-sm btn-outline-primary verify-domain" >Verify</button>
+						{% endif %}
+						<button id="remove-domain" data-custom-domain="{{custom_domain}}" class="btn btn-sm btn-outline-danger remove-domain">Remove Site</button>
+					</p>
+				{% endif %}
+			  </div>
+			</div>
+		  </aside>
+		<aside class="col-md-4">
+		<div class="card border-danger mb-3 h-100">
+			<div class="card-body">
+			  <h3 class="card-title text-danger">Delete Account</h3>
+			  <p class="card-text" id="warning-text"></p>
+			  <button id="delete-action" class="btn btn-outline-danger btn-sm"></button>
+			</div>
+		  </div>
+		</aside>
+		
+	</div>
 </div>

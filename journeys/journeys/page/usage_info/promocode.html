@@ -1,4 +1,4 @@
-{% if coupon_codes[0].name %}
+{% if coupon_count>0 %}
 <div class="alert alert-success" role="alert">
 {% for coupon in coupon_codes %}
 <p><i class="fa fa-check">&nbsp;</i><strong>{{coupon.coupon_code}}</strong>&nbsp;&nbsp;{{coupon.success_message}}</p>
