@@ -44,10 +44,14 @@ def consume_credit(service_name,credits=1):
 	update_limits(limits)
 	
 
-def topup_credit(service_name,credits):
-	service_limits = get_limits(service_name)
-	service_limits['available_credits'] = service_limits['available_credits'] + credits
-	update_limits({service_name:service_limits})
+def topup_credit(service_name,credits,site_name=None):
+	limits = get_limits()
+	if(service_name in limits):
+		limits[service_name]['available_credits'] = cint(limits[service_name]['available_credits']) + cint(credits)
+		frappe.log_error({"limits":limits,"credits":credits},site_name)
+	else:
+		limits[service_name]={'available_credits':credits,'service_name':service_name}
+	update_limits(limits,site_name)
 	
 
 def update_limits(limits_dict,site_name=None):

@@ -52,7 +52,23 @@ frappe.pages['usage-info'].on_page_load = function(wrapper) {
 				site_name
 			}))).appendTo(page.main);
 
+
 			let formdata = "site_name="+frappe.boot.sitename;
+			$.ajax({
+				url:"https://"+master_domain+"/api/method/better_saas.www.add-on.get_addon",
+				data: {"currency":frappe.boot.sysdefaults.currency},
+				crossDomain:true,
+				success: function(r) {
+					if(r.message){
+						$(page.main).find("#saas-addon").html(frappe.render_template("addons",{addon_list:r.message,addon_limits:addon_limits,master_domain:master_domain,site_name:site_name,currency:frappe.boot.sysdefaults.currency}));
+					}
+				},
+				error:function(xhr,status,error){
+					$(page.main).find("#saas-addon").html("Sorry, Could not load Addon.");
+				}
+			});
+
+			
 			$.ajax({
 				url:"https://"+master_domain+"/api/method/better_saas.better_saas.doctype.saas_user.saas_user.get_promocode_benefits",
 				data: formdata,
@@ -62,7 +78,7 @@ frappe.pages['usage-info'].on_page_load = function(wrapper) {
 						let is_lifetime = false;
 						let coupon_count = r.message.length;
 						$.each(r.message,(key,value)=>{
-							if(value.no_expiry){
+							if(value.no_expiry && limits.users==0){
 								is_lifetime = true;
 								$(page.main).find(".upgrade-message").addClass("hide");
 								return false;

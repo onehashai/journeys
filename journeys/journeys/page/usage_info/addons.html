@@ -1,0 +1,28 @@
+<div class="card-body">
+    <h4>Add On</h4>
+    <div class="row">
+        {% for addon in addon_list %}
+        <div class="col-sm-4">
+            <div class="card mb-3 h-100" >
+                <div class="card-body">
+                <h5 class="card-title">{{ addon.item_name }}
+                {% if addon.name in addon_limits %}
+                    <span class="indicator-pill whitespace-nowrap green pull-right"><span>{{addon_limits[addon.name]["available_credits"]}}&nbsp;Credits Left</span></span></h5><br>
+                {% endif %}    
+                <p class="card-text">{{addon.item_description}}<br>
+                {% if currency=="INR" %}
+                    {{ format_currency(addon.inr_price, "INR", 2) }}/&nbsp;{{addon.uom}}(s)
+                {% else %}
+                    {{ format_currency(addon.usd_price, "USD", 2) }}/&nbsp;{{addon.uom}}(s)
+                {% endif %}
+                </p><br>
+                {% if addon.help_link %}
+                    <a href="{{addon.help_link}}" class="btn btn-secondary btn-xs pull-left">Know More</a>
+                {% endif %}
+                <a href="https://{{master_domain}}/add-on?site={{site_name}}&addon={{addon.name}}&currency={{currency}}" class="btn btn-primary btn-xs pull-right">Buy {{addon.uom}}</a>
+                </div>
+            </div>
+        </div>
+{% endfor %}
+</div>
+</div>
