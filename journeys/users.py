@@ -146,7 +146,7 @@ def forms(path=None, referer=None):
         soup = BeautifulSoup(data, 'html.parser')
         soup = minify(soup)
         soup.find('body').attrs["data-path"] += "?path=" + path
-        soup.find(text=re.compile('is_chat_enabled')).replace_with(soup.find(text=re.compile('is_chat_enabled'))[:-29])
+        #soup.find(text=re.compile('is_chat_enabled')).replace_with(soup.find(text=re.compile('is_chat_enabled'))[:-29])
         resp.data = soup.prettify()
         return resp
     except:
