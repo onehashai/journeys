@@ -68,7 +68,7 @@ def make_finrich_request(cin,reference_doctype,reference_docname,request_for):
 def sync_finrich_request(finrich_request):
 	try:
 		current_site_name = frappe.local.site
-		admin_site_name = 'admin_onehash'
+		admin_site_name = frappe.conf.get("master_site_name") or "admin_onehash"
 		finrich_request.reference_finrich_site = current_site_name
 		journeys.connect_admin_db()
 		archive_data_record=None
@@ -102,10 +102,11 @@ def sync_finrich_request(finrich_request):
 
 def get_insta_summary(cin):
 	#cin="L23201MH1959GOI011388"
+	insta_financial_api_key = frappe.conf.get("insta_financial_api_key")
 	url = "https://instafinancials.com/api/InstaSummary/v1/json/CompanyCIN/"+cin
 	session = get_request_session()
 	headers = {
-		'user-key': "mQhNe6zA8cNtVY1GzgWEX3Y+8s0APQwkqUVxRsTN5BD2pL92IBfumQ==",
+		'user-key': insta_financial_api_key,
 		'dataType': "json"
 	}
 	try:
@@ -122,10 +123,11 @@ def get_insta_summary(cin):
 @frappe.whitelist()
 def get_insta_basic(cin=None):
    #L23209TG1989PLC010336
+	insta_financial_api_key = frappe.conf.get("insta_financial_api_key")
 	url = "https://instafinancials.com/api/InstaBasic/V1/json/CompanyCIN/"+cin+"/all"
 	session = get_request_session()
 	headers = {
-		'user-key': "mQhNe6zA8cNtVY1GzgWEX3Y+8s0APQwkqUVxRsTN5BD2pL92IBfumQ==",
+		'user-key': insta_financial_api_key,
 		'dataType': "json"
 	}
 	try:
@@ -140,10 +142,11 @@ def get_insta_basic(cin=None):
 
 @frappe.whitelist()
 def get_cin_by_name(company_name):
+	insta_financial_api_key = frappe.conf.get("insta_financial_api_key")
 	url = "https://instafinancials.com/api/GetCIN/v1/json/Search/"+company_name+"/Mode/sw"
 	session = get_request_session()
 	headers = {
-		'user-key': "mQhNe6zA8cNtVY1GzgWEX3Y+8s0APQwkqUVxRsTN5BD2pL92IBfumQ==",
+		'user-key': insta_financial_api_key,
 		'dataType': "json"
 	}
 

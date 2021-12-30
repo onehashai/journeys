@@ -69,7 +69,7 @@ def make_profile_enrich_request(email=None,mobile_no=None,reference_doctype=None
 def sync_profile_enrich_request(profile_enrich_request):
 	#try:
 	current_site_name = frappe.local.site
-	admin_site_name = 'admin_onehash'
+	admin_site_name = frappe.conf.get("master_site_name") or "admin_onehash"
 	profile_enrich_request.reference_profile_enrich_site = current_site_name
 	journeys.connect_admin_db()
 	archive_data_record=None
