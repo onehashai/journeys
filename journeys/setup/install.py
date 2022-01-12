@@ -78,6 +78,7 @@ def add_standard_navbar_items():
 
 def add_app_name():
 	frappe.db.set_value('System Settings', None, 'app_name', 'OneHash')
+	frappe.db.set_value('Website Settings', None, 'app_name', 'OneHash')
 
 def enable_finrich_profile_enrich():
     frappe.db.set_value('Profile Enrich Settings', None, 'enable_profile_enrich',1)
