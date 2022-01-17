@@ -443,7 +443,7 @@ function summaryFinancialStatements() {
             "data_layout": "dynamic_grid",
             "attributes": {
                 "Total Income": { "data_key": "TotalIncome", "formatter": "currency", "formatter_option": { "Amount In": "Lakhs" } },
-                "Total Expanse": { "data_key": "TotalExpense", "formatter": "currency", "formatter_option": { "Amount In": "Lakhs" } },
+                "Total Expense": { "data_key": "TotalExpense", "formatter": "currency", "formatter_option": { "Amount In": "Lakhs" } },
                 "Profit Before Tax (PBT)": { "data_key": "ProfitBeforeTax", "formatter": "currency", "formatter_option": { "Amount In": "Lakhs" } },
                 "Income Tax": { "data_key": "IncomeTax", "formatter": "currency", "formatter_option": { "Amount In": "Lakhs" } },
                 "Profit After Tax (PAT)": { "data_key": "ProfitAfterTax", "formatter": "currency", "formatter_option": { "Amount In": "Lakhs" } }
@@ -823,7 +823,7 @@ function summaryFinancialStatementsBasic() {
             "data_layout": "dynamic_grid",
             "attributes": {
                 "Total Income": { "data_key": "TotalIncome", "formatter": "currency", "formatter_option": { "Amount In": "Lakhs" } },
-                "Total Expanse": { "data_key": "TotalExpense", "formatter": "currency", "formatter_option": { "Amount In": "Lakhs" } },
+                "Total Expense": { "data_key": "TotalExpense", "formatter": "currency", "formatter_option": { "Amount In": "Lakhs" } },
                 "Profit Before Tax (PBT)": { "data_key": "ProfitBeforeTax", "formatter": "currency", "formatter_option": { "Amount In": "Lakhs" } },
                 "Income Tax": { "data_key": "IncomeTax", "formatter": "currency", "formatter_option": { "Amount In": "Lakhs" } },
                 "Profit After Tax (PAT)": { "data_key": "ProfitAfterTax", "formatter": "currency", "formatter_option": { "Amount In": "Lakhs" } }
@@ -1602,7 +1602,7 @@ var make_digital_footprint = function (digital_data) {
         digital_original_html = digital_original_html.replace("{{main_html}}", main_html);
         return digital_original_html;
     } else {
-        digital_original_html = "NA";
+        digital_original_html = "Sorry, No details available for given Criteria.";
         return digital_original_html;
     }
 }
