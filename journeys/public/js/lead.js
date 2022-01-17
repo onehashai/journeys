@@ -1602,7 +1602,7 @@ var make_digital_footprint = function (digital_data) {
         digital_original_html = digital_original_html.replace("{{main_html}}", main_html);
         return digital_original_html;
     } else {
-        digital_original_html = "Sorry, No details available for given Criteria.";
+        digital_original_html = "Sorry, We couldn't retrieve any public data linked with this lead email.";
         return digital_original_html;
     }
 }
