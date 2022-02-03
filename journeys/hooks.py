@@ -95,6 +95,7 @@ doc_events = {
 #	}
     "User":{
 		"on_update": "journeys.limits.validate_user_limit"
+		# "before_validate":"journeys.users.add_default_role"
 	}
 }
 

@@ -77,13 +77,21 @@ frappe.pages['usage-info'].on_page_load = function(wrapper) {
 					if(r.message){
 						let is_lifetime = false;
 						let coupon_count = r.message.length;
+						let partner = "";
 						$.each(r.message,(key,value)=>{
-							if(value.no_expiry && limits.users==0){
+							if(value.sales_partner=="AppSumo"){
+								$("#refund-text").html('<i class="fa fa-info-circle"></i>&nbsp;To Refund, please visit <a href="https://appsumo.com">AppSumo</a>');
+								partner = value.sales_partner
+								$("#refund-text").removeClass("hidden");
+							}
+							if(value.no_expiry){
 								is_lifetime = true;
 								$(page.main).find(".upgrade-message").addClass("hide");
 								return false;
 							}
+							
 						});
+						
 						$(page.main).find("#coupon-benefits").html(frappe.render_template("promocode",{coupon_codes:r.message,coupon_count:coupon_count}));
 					}
 				},
@@ -156,9 +164,14 @@ frappe.pages['usage-info'].on_page_load = function(wrapper) {
 							$("#promo-validation-feedback").addClass("valid-feedback");
 							$("#promo-validation-feedback").text(r.message["message"]);
 							$("#promo-validation-feedback").show();
+							frappe.msgprint({
+								title: __('Success'),
+								indicator: 'green',
+								message: [__(r.message["message"]),__("It may take sometime to reflect the new limit.")]
+							});
 							setTimeout(() => {
 								window.location.reload();	
-							}, 2000);
+							}, 3000);
 						}
 					},
 					error:function(xhr,status,error){
