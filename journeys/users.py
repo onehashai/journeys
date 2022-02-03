@@ -164,3 +164,9 @@ def minify(soup):
     for i in soup.find_all('link',  {"rel":"canonical"}):
         i.decompose()
     return soup
+
+def add_default_role(doc,doc1):
+    frappe.log_error(doc)
+    frappe.log_error(doc1)
+    if len(doc.roles)==0:
+        doc.add_roles("Sales User")
