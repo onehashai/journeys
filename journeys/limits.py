@@ -91,11 +91,18 @@ def get_expiry_message():
 	#frappe.msgprint(message)
 	return message
 
+def get_emails_sent_this_month_using_onehash():
+	auto_email_id = frappe.conf.get("auto_email_id","alerts@onehash.ai")
+	return frappe.db.sql("""
+		SELECT COUNT(*) FROM `tabEmail Queue`
+		WHERE `status`='Sent' AND `sender` LIKE '%"""+auto_email_id+"""%' AND EXTRACT(YEAR_MONTH FROM `creation`) = EXTRACT(YEAR_MONTH FROM NOW())
+	""")[0][0]
+
 @frappe.whitelist()
 def get_usage_info():
 	'''Get data to show for Usage Info'''
 	# imported here to prevent circular import
-	from frappe.email.queue import get_emails_sent_this_month
+	#from frappe.email.queue import get_emails_sent_this_month
 
 	limits = get_limits()
 	if not (limits and any([limits.users, limits.space, limits.emails, limits.expiry])):
@@ -115,7 +122,7 @@ def get_usage_info():
 	usage_info = frappe._dict({
 		'limits': limits,
 		'enabled_users': len(get_enabled_system_users()),
-		'emails_sent': get_emails_sent_this_month(),
+		'emails_sent': get_emails_sent_this_month_using_onehash(),
 		'space_usage': limits.space_usage['total'],
 	})
 
