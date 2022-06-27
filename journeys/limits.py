@@ -1,12 +1,12 @@
 from __future__ import unicode_literals
 import frappe
 from frappe import _
-from frappe.utils import now_datetime, getdate, flt, cint, get_fullname
+from frappe.utils import now_datetime, getdate, flt, cint, get_fullname, add_days,today
 from frappe.installer import update_site_config
 from frappe.utils.data import cstr, formatdate
 from frappe.utils.user import get_enabled_system_users,reset_simultaneous_sessions,get_system_managers
 from frappe.utils.__init__ import get_site_info
-import os, subprocess, json
+import os, subprocess, json,time
 from six.moves.urllib.parse import parse_qsl, urlsplit, urlunsplit, urlencode
 from six import string_types
 
@@ -53,7 +53,7 @@ def has_expired():
 	if not expires_on:
 		return False
 
-	if now_datetime().date() <= getdate(expires_on):
+	if today() <= add_days(expires_on,cint(frappe.conf.get("grace_period",5))):
 		return False
 
 	return True

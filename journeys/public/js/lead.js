@@ -1759,82 +1759,82 @@ frappe.ui.form.on('Lead', {
             }, __("Enrich Data"));
         });
 
-        let profile_enrich_settings = frappe.db.get_doc('Profile Enrich Settings');
-        profile_enrich_settings.then((profile_enrich_settings) => {
-            if (profile_enrich_settings && !profile_enrich_settings.enable_profile_enrich) {
-                return;
-            }
+        // let profile_enrich_settings = frappe.db.get_doc('Profile Enrich Settings');
+        // profile_enrich_settings.then((profile_enrich_settings) => {
+        //     if (profile_enrich_settings && !profile_enrich_settings.enable_profile_enrich) {
+        //         return;
+        //     }
 
-            frm.add_custom_button(__('Profile Enrich'), function () {
-                frappe.prompt([
-                    {
-                        label: 'Email',
-                        fieldname: 'email',
-                        fieldtype: 'Check',
-                        default: 1
-                    },
-                    {
-                        label: 'Phone',
-                        fieldname: 'phone',
-                        fieldtype: 'Check',
-                        default: 0
-                    },
-                ], (values) => {
-                    let email = values.email;
-                    let mobile = values.mobile;
-                    let search_obj = {};
-                    if (email && frm.doc.email_id) {
-                        search_obj["email"] = frm.doc.email_id
-                    }
-                    if (mobile && frm.doc.mobile_no) {
-                        search_obj["mobile_no"] = frm.doc.mobile_no;
-                    }
-                    if (Object.keys(search_obj).length === 0) {
-                        frappe.throw("Please Update Mobile No or Email");
-                        return;
-                    }
-                    frappe.call({
-                        method: 'journeys.journeys.doctype.profile_enrich_request.profile_enrich_request.get_profile_data',
-                        args: search_obj,
-                        // disable the button until the request is completed
-                        btn: $('.primary-action'),
-                        freeze_message: "<h4>Please wait, retriving data</h4>",
-                        // freeze the screen until the request is completed
-                        freeze: true,
-                        callback: (r) => {
-                            if (r.message) {
-                                let html = make_digital_footprint(r.message)
-                                let d = new frappe.ui.Dialog({
-                                    title: 'Person Summary',
-                                    indicator: "green",
-                                    fields: [
-                                        {
-                                            label: 'Search Result',
-                                            fieldname: 'company_list',
-                                            fieldtype: 'HTML'
-                                        }
-                                    ]
-                                });
-                                d.fields_dict.company_list.$wrapper.html(html);
-                                d.$wrapper.find('.modal-dialog').css({ "width": "80%", "max-width": "80%" });
-                                d.show();
-                                d.$wrapper.find('.nav-link').on('click', function () {
-                                    let id = $(this).attr('id');
-                                    let areaid = id.substring(0, id.length - 4);
-                                    d.$wrapper.find(".tab-pane").each(function (key, ele) {
-                                        $(ele).removeClass('active');
-                                        $(ele).removeClass('show');
-                                    });
-                                    d.$wrapper.find("#" + areaid).addClass("active show");
-                                });
-                            }
-                        }
-                        // on success
+        //     frm.add_custom_button(__('Profile Enrich'), function () {
+        //         frappe.prompt([
+        //             {
+        //                 label: 'Email',
+        //                 fieldname: 'email',
+        //                 fieldtype: 'Check',
+        //                 default: 1
+        //             },
+        //             {
+        //                 label: 'Phone',
+        //                 fieldname: 'phone',
+        //                 fieldtype: 'Check',
+        //                 default: 0
+        //             },
+        //         ], (values) => {
+        //             let email = values.email;
+        //             let mobile = values.mobile;
+        //             let search_obj = {};
+        //             if (email && frm.doc.email_id) {
+        //                 search_obj["email"] = frm.doc.email_id
+        //             }
+        //             if (mobile && frm.doc.mobile_no) {
+        //                 search_obj["mobile_no"] = frm.doc.mobile_no;
+        //             }
+        //             if (Object.keys(search_obj).length === 0) {
+        //                 frappe.throw("Please Update Mobile No or Email");
+        //                 return;
+        //             }
+        //             frappe.call({
+        //                 method: 'journeys.journeys.doctype.profile_enrich_request.profile_enrich_request.get_profile_data',
+        //                 args: search_obj,
+        //                 // disable the button until the request is completed
+        //                 btn: $('.primary-action'),
+        //                 freeze_message: "<h4>Please wait, retriving data</h4>",
+        //                 // freeze the screen until the request is completed
+        //                 freeze: true,
+        //                 callback: (r) => {
+        //                     if (r.message) {
+        //                         let html = make_digital_footprint(r.message)
+        //                         let d = new frappe.ui.Dialog({
+        //                             title: 'Person Summary',
+        //                             indicator: "green",
+        //                             fields: [
+        //                                 {
+        //                                     label: 'Search Result',
+        //                                     fieldname: 'company_list',
+        //                                     fieldtype: 'HTML'
+        //                                 }
+        //                             ]
+        //                         });
+        //                         d.fields_dict.company_list.$wrapper.html(html);
+        //                         d.$wrapper.find('.modal-dialog').css({ "width": "80%", "max-width": "80%" });
+        //                         d.show();
+        //                         d.$wrapper.find('.nav-link').on('click', function () {
+        //                             let id = $(this).attr('id');
+        //                             let areaid = id.substring(0, id.length - 4);
+        //                             d.$wrapper.find(".tab-pane").each(function (key, ele) {
+        //                                 $(ele).removeClass('active');
+        //                                 $(ele).removeClass('show');
+        //                             });
+        //                             d.$wrapper.find("#" + areaid).addClass("active show");
+        //                         });
+        //                     }
+        //                 }
+        //                 // on success
 
-                    });
-                }
-                );
-            }, __("Enrich Data"));
-        });
+        //             });
+        //         }
+        //         );
+        //     }, __("Enrich Data"));
+        // });
     }
 });

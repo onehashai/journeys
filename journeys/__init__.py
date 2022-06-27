@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import frappe
-__version__ = '0.0.1'
+__version__ = '13.17.1'
 frappe.admin_db = getattr(frappe.local, 'admin_db', None)
 def connect_admin_db():
     if not frappe.admin_db: 

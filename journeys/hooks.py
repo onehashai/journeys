@@ -102,7 +102,7 @@ doc_events = {
 on_login = [
 	"journeys.limits.check_if_expired"
 ]
-on_session_creation="journeys.limits.get_expiry_message"
+# on_session_creation="journeys.limits.get_expiry_message"
 
 
 before_write_file = "journeys.limits.validate_space_limit"
