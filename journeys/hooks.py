@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from . import __version__ as app_version
+from journeys import journeys
 
 app_name = "journeys"
 app_title = "Journeys"
@@ -106,6 +107,10 @@ on_login = [
 
 
 before_write_file = "journeys.limits.validate_space_limit"
+
+# Email Hooks
+
+check_email_limit = "journeys.limits.check_email_limit"
 
 # Scheduled Tasks
 # ---------------

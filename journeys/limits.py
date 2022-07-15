@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.utils import now_datetime, getdate, flt, cint, get_fullname, add_days,today
+from frappe.email.smtp import SMTPServer
 from frappe.installer import update_site_config
 from frappe.utils.data import cstr, formatdate
 from frappe.utils.user import get_enabled_system_users,reset_simultaneous_sessions,get_system_managers
@@ -14,6 +15,9 @@ class SiteExpiredError(frappe.ValidationError):
 	http_status_code = 417
 
 class MaxUserLimitReachedError(frappe.ValidationError):
+	http_status_code = 417
+
+class EmailLimitCrossedError(frappe.ValidationError):
 	http_status_code = 417
 
 EXPIRY_WARNING_DAYS = 10
@@ -357,3 +361,43 @@ def disable_users(limits=None):
 			reset_simultaneous_sessions(cint(limits.get('users')))
 
 	frappe.db.commit()
+
+
+def check_email_limit(recipients,sender=None):
+	# if using settings from site_config.json, check email limit
+	# No limit for own email settings
+	smtp_server = SMTPServer()
+	if (smtp_server.email_account
+		and getattr(smtp_server.email_account, "from_site_config", False)
+		or frappe.flags.in_test):
+		
+		monthly_email_limit = frappe.conf.get('limits', {}).get('emails')
+		daily_email_limit = cint(frappe.conf.get('limits', {}).get('daily_emails'))
+		if frappe.flags.in_test:
+			monthly_email_limit = 500
+			daily_email_limit = 50
+
+		if daily_email_limit:
+			# get count of sent mails in last 24 hours
+			today = get_emails_sent_today()
+			if (today + len(recipients)) > daily_email_limit:
+				frappe.throw(_("Cannot send this email. You have crossed the sending limit of {0} emails for this day.").format(daily_email_limit),
+					EmailLimitCrossedError)
+				
+		if not monthly_email_limit:
+			return
+
+		# get count of mails sent this month
+		this_month = get_emails_sent_this_month()
+
+		if (this_month + len(recipients)) > monthly_email_limit:
+			frappe.throw(_("Cannot send this email. You have crossed the sending limit of {0} emails for this month.").format(monthly_email_limit),
+				EmailLimitCrossedError)
+			
+def get_emails_sent_this_month():
+	return frappe.db.sql("""select count(*) from `tabEmail Queue` JOIN `tabEmail Queue Recipient` ON `tabEmail Queue`.name=`tabEmail Queue Recipient`.parent where
+		`tabEmail Queue`.`status`='Sent' and `tabEmail Queue`.creation>DATE_FORMAT(CURDATE(),'%Y-%m-01')""")[0][0]
+
+def get_emails_sent_today():
+	return frappe.db.sql("""select count(*) from `tabEmail Queue` JOIN `tabEmail Queue Recipient` ON `tabEmail Queue`.name=`tabEmail Queue Recipient`.parent where
+		`tabEmail Queue`.`status`='Sent' and `tabEmail Queue`.creation>DATE_SUB(NOW(), INTERVAL 24 HOUR)""")[0][0]
