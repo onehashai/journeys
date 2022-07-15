@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from . import __version__ as app_version
-from journeys import journeys
 
 app_name = "journeys"
 app_title = "Journeys"
@@ -41,7 +40,7 @@ doctype_js = {
 # Home Pages
 # ----------
 override_doctype_class = {
-	'Notification': 'journeys.journeys.custom_notification.JourneyNotification'
+	"Notification": "journeys.journeys.custom_notification.JourneyNotification"
 }
 # application home page (will override Website Settings)
 home_page = "login"
