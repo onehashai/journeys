@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from better_saas.better_saas.doctype.saas_user.saas_user import get_bench_path
 import frappe
 from frappe import _
 from frappe.utils import now_datetime, getdate, flt, cint, get_fullname
@@ -20,7 +21,8 @@ class MaxLimitReachedError(frappe.ValidationError):
 def get_limits(service_name=None,site = None):
 	site_path=None
 	if(site):
-		site_path = "./"+site
+		bench_path = get_bench_path(site) or "."
+		site_path = bench_path+"/sites/"+site
 
 	site_config = frappe._dict(frappe.get_site_config(site_path=site_path))
 	if(service_name and 'addon_limits' in site_config and service_name in site_config["addon_limits"]):
@@ -58,7 +60,8 @@ def update_limits(limits_dict,site_name=None):
 	'''Add/Update limit in site_config'''
 	limits = get_limits()
 	limits.update(limits_dict)
-	site_path= os.path.join("./"+site_name, "site_config.json") if site_name else None
+	bench_path = get_bench_path(site_name) or "."
+	site_path= os.path.join(bench_path+"/sites/"+site_name, "site_config.json") if site_name else None
 	update_site_config("addon_limits", limits, validate=True,site_config_path=site_path)
 	if(site_path):
 		frappe.local.conf.addon_limits = limits
