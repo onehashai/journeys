@@ -94,7 +94,10 @@ doc_events = {
 # 		"on_trash": "method"
 #	}
     "User":{
-		"on_update": "journeys.limits.validate_user_limit"
+		"on_update": [
+			"journeys.limits.validate_user_limit",
+			"journeys.journeys.background_jobs.sync_user"
+			]
 		# "before_validate":"journeys.users.add_default_role"
 	}
 }
@@ -130,6 +133,9 @@ scheduler_events = {
             "journeys.journeys.doctype.indiamart_settings.indiamart_settings.sync_enquiry"
         ],
 		"*/10 * * * *":[
+			"journeys.journeys.doctype.event_notification_settings.event_notification_settings.event_reminder"
+		],
+		"15 */6 * * *":[
 			"journeys.journeys.doctype.event_notification_settings.event_notification_settings.event_reminder"
 		]
     }
