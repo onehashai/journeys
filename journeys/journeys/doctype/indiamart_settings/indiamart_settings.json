@@ -1,10 +1,12 @@
 {
+ "actions": [],
  "creation": "2021-01-31 21:23:31.746070",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "enable_indiamart",
+  "api_version",
   "crm_key",
   "registered_mobile",
   "last_sync_time"
@@ -35,10 +37,17 @@
    "label": "Registered Mobile",
    "options": "Phone",
    "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "api_version",
+   "fieldtype": "Check",
+   "label": "API Version 2"
   }
  ],
  "issingle": 1,
- "modified": "2021-02-01 00:35:46.792957",
+ "links": [],
+ "modified": "2022-12-26 10:50:53.227029",
  "modified_by": "Administrator",
  "module": "Journeys",
  "name": "IndiaMart Settings",
