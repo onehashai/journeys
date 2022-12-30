@@ -25,8 +25,7 @@ class IndiaMartSettings(Document):
 			frappe.msgprint(_("Missing value for CRM Key"), raise_exception=frappe.ValidationError)
 
 	def validate_request(self):
-		# end_time = frappe.utils.now()
-		end_time = '25-11-2022 01:47:23'
+		end_time = frappe.utils.now()
 		if(self and self.last_sync_time):
 			start_time = self.last_sync_time
 		else:
@@ -95,8 +94,7 @@ def sync_enquiry():
 	if(not settings.enable_indiamart):
 		return 
 
-	# end_time = frappe.utils.now()
-	end_time = '25-11-2022 01:47:23'
+	end_time = frappe.utils.now()
 	if(settings and settings.last_sync_time):
 		start_time = settings.last_sync_time
 	else:
