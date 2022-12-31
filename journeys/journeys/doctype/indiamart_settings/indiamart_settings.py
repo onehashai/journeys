@@ -16,7 +16,10 @@ class IndiaMartSettings(Document):
 			setup_custom_fields()
 			add_lead_source()
 			self.validate_access_credentials()
-			self.validate_request()
+			if(not self.api_version):
+				self.validate_request()
+			else:
+				self.validate_requestold()
 		else:
 			pass
 	
@@ -31,29 +34,40 @@ class IndiaMartSettings(Document):
 		else:
 			import datetime
 			start_time = datetime.datetime.now()-datetime.timedelta(minutes=15)
-		if(not self.api_version):
-			url = "https://mapi.indiamart.com/wservce/enquiry/listing/GLUSR_MOBILE/{0}/GLUSR_MOBILE_KEY/{1}/".format(self.registered_mobile,self.crm_key)
-		else:
-		# ye nhi hai url = "https://mapi.indiamart.com/wservce/enquiry/listing/GLUSR_MOBILE/{0}/GLUSR_MOBILE_KEY/{1}/".format(self.registered_mobile,self.crm_key)
-			url = "https://mapi.indiamart.com/wservce/crm/crmListing/v2/?glusr_crm_key={0}".format(self.crm_key)
-		# url = "https://mapi.indiamart.com/wservce/crm/crmListing/v2/?glusr_crm_key={0}&start_time=19-Dec-2022&end_time=21-DEC-2022".format(self.crm_key,start_time,end_time)
-		
+			url = "https://mapi.indiamart.com/wservce/crm/crmListing/v2/?glusr_crm_key={0}&start_time={1}&end_time={2}".format(self.crm_key,start_time,end_time)
 		session = get_request_session()
-		# try:
-		# 	d = session.get(url, data={},auth='', headers=None)
-		# 	d.raise_for_status()
-		# 	response = d.json()		
-		# 	if(not self.api_version):
-			
-		# 		if(response>0 and response[0]["Error_Message"]):
-		# 				frappe.msgprint(_(response[0]["Error_Message"]), raise_exception=frappe.ValidationError)			
-		# 	else:
-		# 		if(response>0 and response["RESPONSE"]):
-		# 				frappe.msgprint(_(response["RESPONSE"]), raise_exception=frappe.ValidationError)
-		# 
-		# except Exception as e:
-		# 	frappe.log_error(frappe.get_traceback())
-		# 	#raise e
+		try:
+			d = session.get(url, data={},auth='', headers=None)
+			d.raise_for_status()
+			response = d.json()	
+			if(response!=[] and response["RESPONSE"]):
+				frappe.msgprint(_(response["RESPONSE"]), raise_exception=frappe.ValidationError)
+		except Exception as e:
+			frappe.log_error(frappe.get_traceback())
+			#raise e
+
+	def validate_requestold(self):
+		end_time = frappe.utils.now()
+		if(self and self.last_sync_time):
+			start_time = self.last_sync_time
+		else:
+			import datetime
+			start_time = datetime.datetime.now()-datetime.timedelta(minutes=15)
+			url = "https://mapi.indiamart.com/wservce/enquiry/listing/GLUSR_MOBILE/{0}/GLUSR_MOBILE_KEY/{1}/".format(self.registered_mobile,self.crm_key)
+		session = get_request_session()
+		try:
+			d = session.get(url, data={},auth='', headers=None)
+			d.raise_for_status()
+			response = d.json()	
+			frappe.log_error(response,'validatio checking code')	
+			if(response>0 and response[0]["Error_Message"]):
+				frappe.msgprint(_(response[0]["Error_Message"]), raise_exception=frappe.ValidationError)			
+			else:
+				if(response!=[] and response["RESPONSE"]):
+					frappe.msgprint(_(response["RESPONSE"]), raise_exception=frappe.ValidationError)
+		except Exception as e:
+			frappe.log_error(frappe.get_traceback())
+			#raise e
 
 
 def setup_custom_fields():
@@ -110,11 +124,12 @@ def sync_enquiry():
 		url = "https://mapi.indiamart.com/wservce/crm/crmListing/v2/?glusr_crm_key={0}&start_time={1}&end_time={2}".format(settings.crm_key,start_time,end_time)
 		# url = "https://mapi.indiamart.com/wservce/crm/crmListing/v2/?glusr_crm_key={0}&start_time=28-09-2022&end_time=03-10-2022".format(settings.crm_key,start_time,end_time)
 	session = get_request_session()
+	d = session.get(url, data={},auth='')
+	d.raise_for_status()
+	response = d.json()	
+			
 	try:
 		if(settings.api_version):
-			d = session.get(url, data={},auth='')
-			d.raise_for_status()
-			response = d.json()	
 			# frappe.log_error(response,'upper')
 			
 			if(response["STATUS"]=="SUCCESS" and response["RESPONSE"]==[]): 
@@ -124,10 +139,12 @@ def sync_enquiry():
 			elif(response["STATUS"]=="SUCCESS" and response["RESPONSE"]!=[]): 
 				settings.last_sync_time = end_time
 				settings.save()
-				frappe.log_error(response,'getRespoce')
+				
 				for value in response:
 					if value == 'RESPONSE':
+						frappe.log_error(value,'getRespoce')
 						opportunitys = response[value] 
+						# frappe.log_error(opportunitys,'opportunitys')
 						for opportunity in opportunitys:
 							opp_name = frappe.db.get_value("Opportunity", {"indiamart_query_id": opportunity["UNIQUE_QUERY_ID"]})
 							if opp_name:
@@ -139,7 +156,7 @@ def sync_enquiry():
 								"indiamart_qtype":opportunity["QUERY_TYPE"],
 								"contact_email":opportunity["SENDER_EMAIL"],
 								"contact_mobile":opportunity["SENDER_MOBILE"],
-								"title":opportunity["SUBJECT"],
+								# "title":opportunity["SUBJECT"],
 								"customer_name":opportunity["SENDER_COMPANY"],
 								"opportunity_date":opportunity["QUERY_TIME"],
 								"address_display":opportunity["SENDER_ADDRESS"],
@@ -147,9 +164,12 @@ def sync_enquiry():
 								"source":"IndiaMart"
 							})
 							result = make_new_lead_if_required(opportunity)				
+						if(result):
 							new_opportunity.opportunity_from=result[0]
 							new_opportunity.party_name = result[1]
 							new_opportunity.insert()
+						settings.last_sync_time = end_time
+						settings.save()
 		else:
 			if(len(response)>0 and "Error_Message" in response[0]):
 				if response[0]["Error_Message"]!="There are no leads in the given time duration.please try for a different duration.":
@@ -169,7 +189,7 @@ def sync_enquiry():
 						"indiamart_qtype":opportunity["QUERY_MODID"],
 						"contact_email":opportunity["SENDEREMAIL"],
 						"contact_mobile":opportunity["MOB"],
-						"title":opportunity["SUBJECT"],
+						# "title":opportunity["SUBJECT"],
 						"customer_name":opportunity["SENDERNAME"],
 						"opportunity_date":opportunity["DATE_RE"],
 						"address_display":opportunity["ENQ_ADDRESS"],
