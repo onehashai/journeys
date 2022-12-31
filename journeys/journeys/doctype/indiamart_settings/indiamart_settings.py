@@ -106,8 +106,8 @@ def sync_enquiry():
 		# url = "https://mapi.indiamart.com/wservce/crm/crmListing/v2/?glusr_crm_key={0}&start_time=19-Dec-2022&end_time=21-DEC-2022".format(settings.crm_key,start_time,end_time)
 		# ye nhi hai  url = "https://mapi.indiamart.com/wservce/crm/crmListing/v2/?glusr_crm_key={0}&start_time={1}&end_time={2}".format(settings.crm_key,start_time,end_time)
 	else:
-		url = "https://mapi.indiamart.com/wservce/crm/crmListing/v2/?glusr_crm_key={0}&start_time={1}&end_time={2}".format(settings.crm_key,start_time,end_time)
-		
+		# url = "https://mapi.indiamart.com/wservce/crm/crmListing/v2/?glusr_crm_key={0}&start_time={1}&end_time={2}".format(settings.crm_key,start_time,end_time)
+		url = "https://mapi.indiamart.com/wservce/crm/crmListing/v2/?glusr_crm_key={0}&start_time=28-09-2022&end_time=03-10-2022".format(settings.crm_key,start_time,end_time)
 	session = get_request_session()
 	try:
 		if(settings.api_version):
