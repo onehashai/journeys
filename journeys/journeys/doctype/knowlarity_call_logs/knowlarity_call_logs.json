@@ -1,0 +1,102 @@
+{
+ "actions": [],
+ "autoname": "field:uuidd",
+ "creation": "2023-04-03 09:25:15.171829",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "uuidd",
+  "customer_number",
+  "status",
+  "start_time",
+  "call_duration",
+  "knowlarity_number",
+  "extension",
+  "agent_number",
+  "call_recording",
+  "button"
+ ],
+ "fields": [
+  {
+   "fieldname": "uuidd",
+   "fieldtype": "Data",
+   "label": "UUIDD",
+   "unique": 1
+  },
+  {
+   "fieldname": "customer_number",
+   "fieldtype": "Data",
+   "label": "Customer Number"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Data",
+   "label": "Status"
+  },
+  {
+   "fieldname": "start_time",
+   "fieldtype": "Datetime",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Start Time"
+  },
+  {
+   "fieldname": "call_duration",
+   "fieldtype": "Data",
+   "label": "Call Duration"
+  },
+  {
+   "fieldname": "knowlarity_number",
+   "fieldtype": "Data",
+   "label": "Knowlarity Number"
+  },
+  {
+   "fieldname": "extension",
+   "fieldtype": "Data",
+   "label": "Extension"
+  },
+  {
+   "fieldname": "agent_number",
+   "fieldtype": "Data",
+   "label": "Agent Number"
+  },
+  {
+   "default": "None",
+   "fieldname": "call_recording",
+   "fieldtype": "Small Text",
+   "label": "Call Recording"
+  },
+  {
+   "fieldname": "button",
+   "fieldtype": "HTML",
+   "label": "Call Recording Bu",
+   "options": "<button>\n  <a href=\"{{ doc.call_recording}}\">Download Recording</a>\n</button>\n<br>"
+  }
+ ],
+ "hide_toolbar": 1,
+ "in_create": 1,
+ "links": [],
+ "modified": "2023-04-10 11:02:03.200102",
+ "modified_by": "Administrator",
+ "module": "Journeys",
+ "name": "Knowlarity Call Logs",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "start_time",
+ "sort_order": "DESC"
+}
