@@ -1909,11 +1909,13 @@ frappe.ui.form.on('Lead', {
             let getfileds = frappe.get_meta('Lead').fields
             let setfileds = '<span>Call with Knowlarity:</span><br>'
             let count = 0;
+            const baseUrl = new URL(window.location.href);
+            baseUrl.pathname = "/";
             await getfileds.forEach(function (value) {
                 console.log(cur_frm.doc[value.fieldname], value.options, "Allvalues")
                 if (value.options == 'Phone' && cur_frm.doc[value.fieldname] !== undefined && cur_frm.doc[value.fieldname] !== '') {
                     count++;
-                    setfileds = setfileds + '<a href="https://staging.onehash.ai/api/method/journeys.journeys.doctype.knowlarity_call_logs.knowlarity_call_logs.make_click_to_call_knowlarity?customer_number=' + cur_frm.doc[value.fieldname].substring(1) + '&lead_number=' + cur_frm.doc['name'] + '">' + count + ". ClickToCall: " + cur_frm.doc[value.fieldname] + '</a><br>';
+                    setfileds = setfileds + '<a href="'+baseUrl.origin+'/api/method/journeys.journeys.doctype.knowlarity_call_logs.knowlarity_call_logs.make_click_to_call_knowlarity?customer_number=' + cur_frm.doc[value.fieldname].substring(1) + '&lead_number=' + cur_frm.doc['name'] + '">' + count + ". ClickToCall: " + cur_frm.doc[value.fieldname] + '</a><br>';
                 }
             })
             d.fields_dict.Knowlarity.$wrapper.html(setfileds)
