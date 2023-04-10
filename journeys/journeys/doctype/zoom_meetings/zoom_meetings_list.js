@@ -1,0 +1,120 @@
+
+/* List view in Zoom Meeting */
+frappe.listview_settings['Zoom Meetings'] = {
+	refresh: function (listview) {
+
+		// Integrate with Zoom
+		listview.page.add_inner_button("Integrate Zoom", function () {
+			var d = new frappe.ui.Dialog({
+				'fields': [
+					{ 'fieldname': 'ht', 'fieldtype': 'HTML' }
+				],
+			});
+
+			let zoom_marketplace_url = '<a href="https://marketplace.zoom.us">Go to Zoom Marketplace</a>';
+			d.fields_dict.ht.$wrapper.html(zoom_marketplace_url);
+			d.show();
+		});
+
+
+		/* Parameters in Url, converted to key value pairs. */
+		const urlParams = new URLSearchParams(window.location.search);
+		console.log(urlParams);
+		if (urlParams.get('loggedin') === 'true') {
+
+			//Saving access token in zoom settings
+			let authentication_token = urlParams.get('authentication_token');
+			frappe.db.set_value('ZoomSettings', 'ZoomSettings', 'authentication_token', authentication_token);
+
+			// Popup to show user is logged in
+			let d = new frappe.ui.Dialog({
+				title: 'You are LoggedIn to Zoom',
+				fields: [
+				],
+				primary_action_label: 'Close',
+				primary_action(values) {
+
+					d.hide();
+					const baseUrl = new URL(window.location.href);
+					baseUrl.pathname = "/";
+					console.log(window.location.href,baseUrl.origin+'/app/zoom-meetings',"ZoomSettings");
+					window.location.href = baseUrl.origin+'/app/zoom-meetings',"ZoomSettings";
+				}
+			});
+			d.show();
+		}
+
+
+		//Disable Add Meeting Button
+		let addButton = document.querySelector('.btn.btn-primary.btn-sm.primary-action');
+		addButton.disabled = true;
+
+		/* SignIn Button to Zoom */
+		listview.page.add_inner_button("SignInZoom", async function () {
+
+			//SignIn Url
+			let client_id = await frappe.db.get_single_value('ZoomSettings', 'client_id');
+			let redirect_uri = await frappe.db.get_single_value('ZoomSettings', 'redirect_uri');
+			window.location.href = 'https://zoom.us/oauth/authorize?response_type=code&client_id=' + client_id + '&redirect_uri=' + redirect_uri;
+
+		});
+
+		// Create Zoom Meeting
+		listview.page.add_inner_button("Create Zoom Meeting", function () {
+
+			let d = new frappe.ui.Dialog({
+				title: 'Create a Meeting',
+				fields: [
+					{
+						label: 'Topic',
+						fieldname: 'topic',
+						fieldtype: 'Data',
+						reqd: 1
+					},
+					{
+						label: 'Description',
+						fieldname: 'agenda',
+						fieldtype: 'Small Text',
+						reqd: 1
+					}
+				],
+				primary_action_label: 'Submit',
+				primary_action(values) {
+					console.log("Create zoom meeting");
+					const baseUrl = new URL(window.location.href);
+					baseUrl.pathname = "/";
+					frappe.call({
+						args: {
+							'agenda': values.agenda,
+							'topic': values.topic
+						},
+						callback: (r) => {
+							console.log(r)
+						},
+						url: baseUrl.origin+'/api/method/journeys.journeys.doctype.zoom_meetings.zoom_meetings.create_zoom_meeting',
+						success: function (response) {
+							console.log("ClientScriptZoomMeeting List", response);
+						}
+					});
+					d.hide();
+				}
+			});
+			d.show();
+			console.log(d);
+		});
+	},
+	button: {
+		show: function (doc) {
+			return true;
+		},
+		get_label: function () {
+			return __('View');
+		},
+		get_description: function (doc) {
+			return __('Print {0}', [doc.name])
+		},
+		action: function (doc) {
+			console.log(window);
+		}
+	}
+}
