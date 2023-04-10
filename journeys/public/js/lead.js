@@ -1836,5 +1836,88 @@ frappe.ui.form.on('Lead', {
         //         );
         //     }, __("Enrich Data"));
         // });
+
+        /* Parameters in Url, converted to key value pairs. */
+        const urlParams = new URLSearchParams(window.location.search);
+        console.log(urlParams);
+        if (urlParams.get('call_placed') === 'true') {
+            frappe.msgprint("Call is placed.");
+        }
+        let getfileds = frappe.get_meta('Lead').fields
+        let numbers = [];
+        getfileds.forEach(function (value) {
+            console.log(cur_frm.doc[value.fieldname], value.options, "Allvalues")
+            if (value.options == 'Phone' && cur_frm.doc[value.fieldname] !== undefined && cur_frm.doc[value.fieldname] !== '') {
+                numbers.push(cur_frm.doc[value.fieldname]);
+                console.log(cur_frm.doc[value.fieldname]);
+            }
+        });
+        // CallHistory Knowlarity
+        frm.add_custom_button(__('Call Logs Knowlarity'), function () {
+            frappe.set_route('List', 'Knowlarity Call Logs', { 'customer_number': ['in', numbers] });
+        }, __('Calling'));
+
+        // // CallHippo CallHippo
+        // frm.add_custom_button(__('Call Logs CallHippo'), function () {
+        //     frappe.set_route('List', 'CallHippo Call Logs', { 'to': ['in', numbers] });
+        // }, __('Calling'));
+
+        // // Calling CallHippo Option
+        // frm.add_custom_button("Call with CallHippo", async function () {
+        //     var primary_mobile = frm.doc.primary_mobile;
+        //     var d = new frappe.ui.Dialog({
+        //         'fields': [
+        //             { 'fieldname': 'CallHippo', 'fieldtype': 'HTML' },
+        //         ],
+        //     });
+
+        //     if (!frm.doc.primary_mobile) {
+        //         frappe.msgprint(__("Please add Mobile Number First."));
+        //         return false;
+        //     }
+        //     let getfileds = frappe.get_meta('Lead').fields
+        //     let setfileds = '<span>Call with CallHippo:</span><br>'
+        //     let count = 0;
+        //     await getfileds.forEach(function (value) {
+        //         console.log(cur_frm.doc[value.fieldname], value.options, "Allvalues")
+        //         if (value.options == 'Phone' && cur_frm.doc[value.fieldname] !== undefined && cur_frm.doc[value.fieldname] !== '') {
+        //             count++;
+        //             console.log(cur_frm.doc[value.fieldname], "Valid VAlues");
+        //             setfileds = setfileds + '<a href="tel:' + cur_frm.doc[value.fieldname] + '">' + count + ". ClickToCall: " + cur_frm.doc[value.fieldname] + '</a><br>';
+        //         }
+        //     })
+        //     console.log(setfileds, "Setfields")
+        //     d.fields_dict.CallHippo.$wrapper.html(setfileds)
+
+        //     d.show();
+        // }, __('Calling'));
+
+
+        // Calling Knowlarity Option
+        frm.add_custom_button("Call with Knowlarity", async function () {
+            var primary_mobile = frm.doc.primary_mobile;
+            var d = new frappe.ui.Dialog({
+                'fields': [
+                    { 'fieldname': 'Knowlarity', 'fieldtype': 'HTML' },
+                ],
+            });
+
+            if (!frm.doc.primary_mobile) {
+                frappe.msgprint(__("Please add Mobile Number First."));
+                return false;
+            }
+            let getfileds = frappe.get_meta('Lead').fields
+            let setfileds = '<span>Call with Knowlarity:</span><br>'
+            let count = 0;
+            await getfileds.forEach(function (value) {
+                console.log(cur_frm.doc[value.fieldname], value.options, "Allvalues")
+                if (value.options == 'Phone' && cur_frm.doc[value.fieldname] !== undefined && cur_frm.doc[value.fieldname] !== '') {
+                    count++;
+                    setfileds = setfileds + '<a href="https://staging.onehash.ai/api/method/journeys.journeys.doctype.knowlarity_call_logs.knowlarity_call_logs.make_click_to_call_knowlarity?customer_number=' + cur_frm.doc[value.fieldname].substring(1) + '&lead_number=' + cur_frm.doc['name'] + '">' + count + ". ClickToCall: " + cur_frm.doc[value.fieldname] + '</a><br>';
+                }
+            })
+            d.fields_dict.Knowlarity.$wrapper.html(setfileds)
+            d.show();
+        }, __('Calling'));
     }
 });

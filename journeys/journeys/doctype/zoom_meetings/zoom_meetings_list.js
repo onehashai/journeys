@@ -3,19 +3,6 @@
 frappe.listview_settings['Zoom Meetings'] = {
 	refresh: function (listview) {
 
-		// Integrate with Zoom
-		listview.page.add_inner_button("Integrate Zoom", function () {
-			var d = new frappe.ui.Dialog({
-				'fields': [
-					{ 'fieldname': 'ht', 'fieldtype': 'HTML' }
-				],
-			});
-
-			let zoom_marketplace_url = '<a href="https://marketplace.zoom.us">Go to Zoom Marketplace</a>';
-			d.fields_dict.ht.$wrapper.html(zoom_marketplace_url);
-			d.show();
-		});
-
 
 		/* Parameters in Url, converted to key value pairs. */
 		const urlParams = new URLSearchParams(window.location.search);
