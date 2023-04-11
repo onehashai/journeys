@@ -39,6 +39,7 @@ def update_zoom_meeting(self):
 	"duration": self.duration,
 	"password": self.password,
 	"timezone": self.timezone,
+	"agenda": self.description,
 	"topic": self.topic,
 	"start_time":format_onehash_to_zoom_date(self.starttime),
 	"settings": {
