@@ -55,7 +55,7 @@
    "reqd": 1
   },
   {
-   "default": "https://www.knowlarity.com",
+   "default": "https://kpi.knowlarity.com",
    "fieldname": "base_url",
    "fieldtype": "Data",
    "label": "Base_Url",
@@ -82,7 +82,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-04-07 17:05:46.207607",
+ "modified": "2023-04-11 12:02:31.401954",
  "modified_by": "Administrator",
  "module": "Journeys",
  "name": "Knowlarity Settings",
