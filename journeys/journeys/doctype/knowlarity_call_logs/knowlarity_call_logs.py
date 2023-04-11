@@ -118,9 +118,23 @@ def make_click_to_call_knowlarity():
 		'Content-Type': k_settings.content_type,
 		'x-api-key': k_settings.x_api_key
 	})
-	frappe.log_error(response)
-
+	frappe.log_error(response,"response")
+	call_placed="false"
+	message=""
+	if 'success' in response:
+		success_data = response['success']
+		message=success_data['message']
+		call_placed="true"
+		# do something with the success_data dictionary
+	elif 'error' in response:
+		error_data = response['error']
+		frappe.log_error("Error calling",error_data['message'])
+		message=error_data['message']
+		# frappe.throw()
+		# do something with the error_data dictionary
+	else:
+		message="Unknown response from API"
 	# Redirecting to Knowlarity Call Logs Doctype
 	frappe.response["type"] = "redirect"
-	frappe.response["location"] = '/app/lead/'+frappe.form_dict['lead_number']+'?call_placed=true'
+	frappe.response["location"] = '/app/lead/'+frappe.form_dict['lead_number']+'?call_placed='+"true&message="+message
 
