@@ -1839,7 +1839,7 @@ frappe.ui.form.on('Lead', {
 
         // Calling Status Message
         const urlParams = new URLSearchParams(window.location.search);
-        console.log(urlParams);
+        // console.log(urlParams);
         let message=urlParams.get('message');
         if (urlParams.get('call_placed') === 'true') {
             frappe.msgprint("Call is placed. Knowlarity Message: "+message);
@@ -1849,7 +1849,7 @@ frappe.ui.form.on('Lead', {
         }
 
         // Refresh URL After Displaying Calling Status
-        console.log(urlParams.get('call_placed'))
+        // console.log(urlParams.get('call_placed'))
         if(urlParams.get('call_placed')!==null)
         {
             setTimeout(function () {
@@ -1886,7 +1886,7 @@ async function clickToCall(frm,method,href){
 
     // Fetch Contacts From Lead
     let phoneNumbers = await fetchContactNumbers(frm);
-    console.log(phoneNumbers)
+    // console.log(phoneNumbers)
     // Fetch Base Url
     if(method=="Knowlarity"){
         const baseUrl = new URL(window.location.href);
@@ -1903,7 +1903,7 @@ async function clickToCall(frm,method,href){
     }
     phoneNumbers.forEach(phoneNumber => {
         count++;
-        console.log(phoneNumber);
+        // console.log(phoneNumber);
         console.log('<div">' +
             '<a href="' + href + phoneNumber.substring(1) + '">' + count + ". ClickToCall: " + phoneNumber + '</a>' +
             '</div><br>');
@@ -1926,19 +1926,19 @@ async function clickToCall(frm,method,href){
 }
 //Return all fetched phone numbers
 function fetchContactNumbers(event){
-    console.log("Fetched")
+    // console.log("Fetched")
 
     //Fetch All numbers
     let addButton = document.querySelectorAll('.address-box');
-    console.log(addButton, "AddButton");
+    // console.log(addButton, "AddButton");
     let addButtonHTML = Array.from(addButton).map(button => button.outerHTML);
 
     let html = addButtonHTML.join('');
 
-    console.log(html, "HTML");
+    // console.log(html, "HTML");
 
     const phoneRegex = /\+?\d{10,}/g;
     const phoneNumbers = html.match(phoneRegex);
-    console.log(phoneNumbers, "Phoneee numbers");
+    // console.log(phoneNumbers, "Phoneee numbers");
     return phoneNumbers;
 }
