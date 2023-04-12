@@ -1897,18 +1897,17 @@ async function clickToCall(frm,method,href){
     // List all the numbers for click to call
     let setfields = '<span>Call with '+method+':</span><br>';
     let count = 0;
-    console.log(phoneNumbers)
-    console.log(phoneNumbers==null)
-    if (phoneNumbers.length == 0) {
+    // console.log(phoneNumbers)
+    if (phoneNumbers == null) {
         frappe.msgprint("Please add Mobile Number First.");
         return false;
     }
     phoneNumbers.forEach(phoneNumber => {
         count++;
         // console.log(phoneNumber);
-        console.log('<div">' +
-            '<a href="' + href + phoneNumber.substring(1) + '">' + count + ". ClickToCall: " + phoneNumber + '</a>' +
-            '</div><br>');
+        // console.log('<div">' +
+        //     '<a href="' + href + phoneNumber.substring(1) + '">' + count + ". ClickToCall: " + phoneNumber + '</a>' +
+        //     '</div><br>');
         setfields = setfields + '<div">' +
             '<a href="' + href + phoneNumber.substring(1) +'">' + count + ". ClickToCall: " + phoneNumber + '</a>' +
             '</div><br>';
