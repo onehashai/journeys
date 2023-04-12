@@ -136,5 +136,5 @@ def make_click_to_call_knowlarity():
 		message="Unknown response from API"
 	# Redirecting to Knowlarity Call Logs Doctype
 	frappe.response["type"] = "redirect"
-	frappe.response["location"] = '/app/lead/'+frappe.form_dict['lead_number']+'?call_placed='+"true&message="+message
+	frappe.response["location"] = '/app/lead/'+frappe.form_dict['lead_number']+'?call_placed='+call_placed+"&message="+message
 

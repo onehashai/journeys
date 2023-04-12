@@ -1,0 +1,218 @@
+{
+ "actions": [],
+ "autoname": "field:call_sid",
+ "creation": "2023-04-05 09:55:13.199871",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "call_details_section",
+  "call_sid",
+  "call_duration",
+  "start_time",
+  "end_time",
+  "ring_answer_duration",
+  "hangup_by",
+  "call_type",
+  "column_break_8",
+  "status",
+  "admin_email",
+  "time",
+  "reason",
+  "call_recording_section",
+  "call_recording",
+  "recording_html",
+  "column_break_4",
+  "answered_device",
+  "to",
+  "country",
+  "caller_details_section",
+  "caller_name",
+  "from",
+  "caller_email",
+  "call_summary_section",
+  "note",
+  "section_break_19",
+  "call_charge",
+  "billed_minutes"
+ ],
+ "fields": [
+  {
+   "fieldname": "call_details_section",
+   "fieldtype": "Section Break",
+   "label": "Call Details"
+  },
+  {
+   "fieldname": "call_sid",
+   "fieldtype": "Data",
+   "label": "Id",
+   "unique": 1
+  },
+  {
+   "description": "Call Duration in seconds",
+   "fieldname": "call_duration",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Duration"
+  },
+  {
+   "fieldname": "start_time",
+   "fieldtype": "Datetime",
+   "label": "Start Time"
+  },
+  {
+   "fieldname": "end_time",
+   "fieldtype": "Datetime",
+   "label": "End Time"
+  },
+  {
+   "fieldname": "ring_answer_duration",
+   "fieldtype": "Data",
+   "label": "Ring Answer Duration"
+  },
+  {
+   "fieldname": "hangup_by",
+   "fieldtype": "Data",
+   "label": "Hangup By"
+  },
+  {
+   "fieldname": "call_type",
+   "fieldtype": "Data",
+   "label": "CallType"
+  },
+  {
+   "fieldname": "column_break_8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Status"
+  },
+  {
+   "fieldname": "admin_email",
+   "fieldtype": "Data",
+   "label": "Admin Email"
+  },
+  {
+   "fieldname": "time",
+   "fieldtype": "Datetime",
+   "label": "Created At"
+  },
+  {
+   "fieldname": "reason",
+   "fieldtype": "Small Text",
+   "label": "Reason For Failure"
+  },
+  {
+   "fieldname": "call_recording_section",
+   "fieldtype": "Section Break",
+   "label": "Call Recording"
+  },
+  {
+   "fieldname": "call_recording",
+   "fieldtype": "Data",
+   "label": "Call Recording"
+  },
+  {
+   "fieldname": "recording_html",
+   "fieldtype": "HTML",
+   "label": "Recording HTML",
+   "options": "<button>\n  <a href=\"{{ doc.call_recording}}\" target=\"_blank\">Call Recording</a>\n</button>\n<br>\n<br>\n"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Section Break",
+   "label": "Client Details"
+  },
+  {
+   "fieldname": "answered_device",
+   "fieldtype": "Data",
+   "label": "Answered Device"
+  },
+  {
+   "fieldname": "to",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Client Number"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Data",
+   "label": "Country"
+  },
+  {
+   "fieldname": "caller_details_section",
+   "fieldtype": "Section Break",
+   "label": "Caller Details"
+  },
+  {
+   "fieldname": "caller_name",
+   "fieldtype": "Data",
+   "label": "Caller Name"
+  },
+  {
+   "fieldname": "from",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Caller Number"
+  },
+  {
+   "fieldname": "caller_email",
+   "fieldtype": "Data",
+   "label": "Caller Email"
+  },
+  {
+   "fieldname": "call_summary_section",
+   "fieldtype": "Section Break",
+   "label": "Call Summary"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Call Summary"
+  },
+  {
+   "fieldname": "section_break_19",
+   "fieldtype": "Section Break",
+   "label": "Call Charges"
+  },
+  {
+   "fieldname": "call_charge",
+   "fieldtype": "Data",
+   "label": "Call Charge"
+  },
+  {
+   "fieldname": "billed_minutes",
+   "fieldtype": "Data",
+   "label": "Billed Minute"
+  }
+ ],
+ "in_create": 1,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2023-04-11 19:01:04.438256",
+ "modified_by": "Administrator",
+ "module": "Journeys",
+ "name": "CallHippo Call Logs",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "select": 1,
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "time",
+ "sort_order": "DESC",
+ "track_changes": 1,
+ "track_views": 1
+}
