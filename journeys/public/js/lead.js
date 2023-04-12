@@ -1856,7 +1856,7 @@ frappe.ui.form.on('Lead', {
                 const baseUrl = new URL(window.location.href);
                 baseUrl.pathname = "/";
                 window.location.href = baseUrl.origin + '/app/lead/' + cur_frm.doc['name'];
-            }, 4000);
+            }, 6000);
         }
 
         // CallHistory Knowlarity
@@ -1864,15 +1864,15 @@ frappe.ui.form.on('Lead', {
             frappe.set_route('List', 'Knowlarity Call Logs', { 'customer_number': ['in', fetchContactNumbers(frm)] });
         }, __('Calling'));
 
-        // // CallHippo CallHippo
-        // frm.add_custom_button(__('Call Logs CallHippo'), function () {
-        //     frappe.set_route('List', 'CallHippo Call Logs', { 'to': ['in', fetchContactNumbers(frm)] });
-        // }, __('Calling'));
+        // CallHippo CallHippo
+        frm.add_custom_button(__('Call Logs CallHippo'), function () {
+            frappe.set_route('List', 'CallHippo Call Logs', { 'to': ['in', fetchContactNumbers(frm)] });
+        }, __('Calling'));
 
-        // // Calling CallHippo Option
-        // frm.add_custom_button("Call with CallHippo", async function(){
-        //     clickToCall(frm, "CallHippo", 'tel:');
-        // } , __('Calling'));
+        // Calling CallHippo Option
+        frm.add_custom_button("Call with CallHippo", async function(){
+            clickToCall(frm, "CallHippo", 'tel:');
+        } , __('Calling'));
 
         // Calling Knowlarity Option
         frm.add_custom_button("Call with Knowlarity", async function () {
@@ -1897,8 +1897,10 @@ async function clickToCall(frm,method,href){
     // List all the numbers for click to call
     let setfields = '<span>Call with '+method+':</span><br>';
     let count = 0;
+    console.log(phoneNumbers)
+    console.log(phoneNumbers==null)
     if (phoneNumbers.length == 0) {
-        frappe.msgprint(__("Please add Mobile Number First."));
+        frappe.msgprint("Please add Mobile Number First.");
         return false;
     }
     phoneNumbers.forEach(phoneNumber => {
