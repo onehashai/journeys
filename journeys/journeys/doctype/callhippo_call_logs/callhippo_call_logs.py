@@ -1,7 +1,6 @@
 # Copyright (c) 2023, OneHash Inc and contributors
 # For license information, please see license.txt
 
-# import frappe
 from frappe.model.document import Document
 import pytz
 import frappe
@@ -23,10 +22,8 @@ class CallHippoCallLogs(Document):
 # Fetch All Call Logs of CallHippo
 @frappe.whitelist(allow_guest=True)
 def add_callhippo_logs():
-	# frappe.log_error("","Inside call hippo")
-	# frappe.log_error(frappe.form_dict,"callhippo")
+
 	call_log=frappe.form_dict
-	# frappe.log_error("",call_log['to'])
 	if (call_log['to']=='+11111111111'):
 		frappe.log_error("","Connected with CallHippo")
 	else :
@@ -57,28 +54,22 @@ def add_callhippo_logs():
 			"note": call_log.get('note', '')
 
 		}
-		# frappe.log_error(data,"Data")
 		frappe.get_doc(data).insert(ignore_permissions=True)
 
 # Saving CallHippo time to onehash time
 @frappe.whitelist(allow_guest=True)
 def format_callhippo_to_onehash_date(start_time):
-    # frappe.log_error("Inside", "Inside")
 
     # Get the timezone from system settings
     timezone =  frappe.db.get_single_value("System Settings", "time_zone")
-    # frappe.log_error(timezone)
 
     # Parse the UTC datetime string into a datetime object
     utc_time = datetime.strptime(start_time, '%Y-%m-%dT%H:%M:%S.%fZ')
-    # frappe.log_error(utc_time)
 
     # Set the timezone for the datetime object
     localized_time = pytz.utc.localize(utc_time).astimezone(pytz.timezone(timezone))
-    # frappe.log_error(localized_time)
 
     # Format the datetime object into a string
     start_time_formatted = localized_time.strftime('%Y-%m-%d %H:%M:%S.%f')
-    # frappe.log_error(start_time_formatted)
 
     return start_time_formatted
