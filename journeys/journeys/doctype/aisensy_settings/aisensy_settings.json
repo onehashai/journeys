@@ -1,44 +1,36 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2023-03-27 14:59:31.613447",
+ "creation": "2023-04-06 13:29:53.173777",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "enabled",
-  "token",
-  "webhook_url"
+  "authentication_token"
  ],
  "fields": [
-  {
-   "fieldname": "token",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Token",
-   "reqd": 1
-  },
-  {
-   "fieldname": "webhook_url",
-   "fieldtype": "Data",
-   "label": "Webhook Call Activity Url",
-   "read_only": 1,
-   "reqd": 1
-  },
   {
    "default": "0",
    "fieldname": "enabled",
    "fieldtype": "Check",
    "label": "Enabled"
+  },
+  {
+   "fieldname": "authentication_token",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Authentication Token",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-04-12 16:11:34.960555",
+ "modified": "2023-04-19 13:02:45.476076",
  "modified_by": "Administrator",
  "module": "Journeys",
- "name": "CallHippo Settings",
+ "name": "Aisensy Settings",
  "owner": "Administrator",
  "permissions": [
   {

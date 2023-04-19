@@ -1608,7 +1608,7 @@ var make_digital_footprint = function (digital_data) {
 }
 
 frappe.ui.form.on('Lead', {
-    refresh: function (frm) {
+    refresh: async function (frm) {
         let doc = frappe.db.get_doc('FinRich Settings');
         doc.then((finRichSettings) => {
             if (finRichSettings && !finRichSettings.enable_finrich) {
@@ -1839,7 +1839,6 @@ frappe.ui.form.on('Lead', {
 
         // Calling Status Message
         const urlParams = new URLSearchParams(window.location.search);
-        // console.log(urlParams);
         let message=urlParams.get('message');
         if (urlParams.get('call_placed') === 'true') {
             frappe.msgprint("Call is placed. Knowlarity Message: "+message);
@@ -1849,7 +1848,6 @@ frappe.ui.form.on('Lead', {
         }
 
         // Refresh URL After Displaying Calling Status
-        // console.log(urlParams.get('call_placed'))
         if(urlParams.get('call_placed')!==null)
         {
             setTimeout(function () {
@@ -1859,87 +1857,420 @@ frappe.ui.form.on('Lead', {
             }, 6000);
         }
 
-        // CallHistory Knowlarity
-        frm.add_custom_button(__('Call Logs Knowlarity'), function () {
-            frappe.set_route('List', 'Knowlarity Call Logs', { 'customer_number': ['in', fetchContactNumbers(frm)] });
-        }, __('Calling'));
+        let knowlarity_enabled = await frappe.db.get_single_value('Knowlarity Settings', 'enabled');
+        let call_hippo_enabled = await frappe.db.get_single_value('CallHippo Settings', 'enabled');
+        let aisensy_enabled = await frappe.db.get_single_value('Aisensy Settings', 'enabled');
 
-        // CallHippo CallHippo
-        frm.add_custom_button(__('Call Logs CallHippo'), function () {
-            frappe.set_route('List', 'CallHippo Call Logs', { 'to': ['in', fetchContactNumbers(frm)] });
-        }, __('Calling'));
+        // Aisensy Integration
+        if (aisensy_enabled) {
+            // MessageHistory Aisensy
+            frm.add_custom_button(__('Message Logs Aisensy'), function () {
+                frappe.set_route('List', 'Aisensy Message Logs', { });
+            }, __('Connect'));
 
-        // Calling CallHippo Option
-        frm.add_custom_button("Call with CallHippo", async function(){
-            clickToCall(frm, "CallHippo", 'tel:');
-        } , __('Calling'));
+            // Message Aisensy Option
+            frm.add_custom_button("Message with Aisensy", async function () {
+                 clickToCall(frm,'Message', 'Aisensy', '/api/method/journeys.journeys.doctype.knowlarity_call_logs.knowlarity_call_logs.make_click_to_call_knowlarity?lead_number=' + cur_frm.doc['name'] + '&customer_number=')
+            }, __('Connect'));
+        }
 
-        // Calling Knowlarity Option
-        frm.add_custom_button("Call with Knowlarity", async function () {
-            clickToCall(frm, "Knowlarity", '/api/method/journeys.journeys.doctype.knowlarity_call_logs.knowlarity_call_logs.make_click_to_call_knowlarity?lead_number=' + cur_frm.doc['name'] + '&customer_number=')
-        }, __('Calling'));
+        // Knowlarity Integration
+        if (knowlarity_enabled)
+        {
+            // CallHistory Knowlarity
+            frm.add_custom_button(__('Call Logs Knowlarity'), function () {
+                frappe.set_route('List', 'Knowlarity Call Logs', { 'customer_number': ['in', fetchContactNumbers(frm)] });
+            }, __('Connect'));
+
+            // Calling Knowlarity Option
+            frm.add_custom_button("Call with Knowlarity", async function () {
+                clickToCall(frm,"Call","Knowlarity", '/api/method/journeys.journeys.doctype.knowlarity_call_logs.knowlarity_call_logs.make_click_to_call_knowlarity?lead_number=' + cur_frm.doc['name'] + '&customer_number=')
+            }, __('Connect'));
+        }
+
+        // CallHippo Integration
+        if(call_hippo_enabled)
+        {
+            // CallHippo CallHippo
+            frm.add_custom_button(__('Call Logs CallHippo'), function () {
+                frappe.set_route('List', 'CallHippo Call Logs', { 'to': ['in', fetchContactNumbers(frm)] });
+            }, __('Connect'));
+
+            // Calling CallHippo Option
+            frm.add_custom_button("Call with CallHippo", async function () {
+                clickToCall(frm, "Call","CallHippo", 'tel:');
+            }, __('Connect'));
+        }
     }
 });
 
 //
-async function clickToCall(frm,method,href){
+async function clickToCall(frm,action,method,href){
 
+    // console.log(method,"1");
     // Fetch Contacts From Lead
     let phoneNumbers = await fetchContactNumbers(frm);
-    // console.log(phoneNumbers)
-    // Fetch Base Url
-    if(method=="Knowlarity"){
-        const baseUrl = new URL(window.location.href);
-        baseUrl.pathname = "/";
-        href=baseUrl.origin+href;
-    }
 
     // List all the numbers for click to call
-    let setfields = '<span>Call with '+method+':</span><br>';
+    let setfields = '<span>'+action+'with '+method+':</span><br>';
     let count = 0;
-    // console.log(phoneNumbers)
     if (phoneNumbers == null) {
         frappe.msgprint("Please add Mobile Number First.");
         return false;
     }
-    phoneNumbers.forEach(phoneNumber => {
-        count++;
-        // console.log(phoneNumber);
-        // console.log('<div">' +
-        //     '<a href="' + href + phoneNumber.substring(1) + '">' + count + ". ClickToCall: " + phoneNumber + '</a>' +
-        //     '</div><br>');
-        setfields = setfields + '<div">' +
-            '<a href="' + href + phoneNumber.substring(1) +'">' + count + ". ClickToCall: " + phoneNumber + '</a>' +
-            '</div><br>';
-    });
-    var d = new frappe.ui.Dialog({
-        'fields': [
-            { 'fieldname': method, 'fieldtype': 'HTML' },
-        ],
-    });
-    if(method=="Knowlarity"){
-        d.fields_dict.Knowlarity.$wrapper.html(setfields)
+    // console.log(method);
+    if(method=="Knowlarity" || method=="CallHippo"){
+
+        // Fetch Base Url
+        if (method == "Knowlarity") {
+            const baseUrl = new URL(window.location.href);
+            baseUrl.pathname = "/";
+            href = baseUrl.origin + href;
+        }
+        phoneNumbers.forEach(phoneNumber => {
+            count++;
+            setfields = setfields + '<div">' +
+                '<a href="' + href + phoneNumber.substring(1) +'">' + count + ". ClickTo"+action+": " + phoneNumber + '</a>' +
+                '</div><br>';
+        });
+        var d = new frappe.ui.Dialog({
+            'fields': [
+                { 'fieldname': method, 'fieldtype': 'HTML' },
+            ],
+        });
+        if(method=="Knowlarity"){
+            d.fields_dict.Knowlarity.$wrapper.html(setfields)
+        }
+        else if(method=="CallHippo"){
+            d.fields_dict.CallHippo.$wrapper.html(setfields)
+        }
+        d.show();
     }
-    else if(method=="CallHippo"){
-        d.fields_dict.CallHippo.$wrapper.html(setfields)
+    else{
+        let d = new frappe.ui.Dialog({
+            'title': 'Send Message',
+            'fields': [
+                {
+                    'fieldname': 'customer_name',
+                    'label': 'Customer Name',
+                    'fieldtype': 'Data',
+                    'reqd': 1,
+                    'default': 'Ivan'
+                },
+                {
+                    'fieldname': 'customer_numbers',
+                    'label': 'Customer Number',
+                    'fieldtype': 'MultiSelect',
+                    'options': phoneNumbers,
+                    'reqd': 1,
+                    'description': 'Format: +918839848727, +18839848727, +911111111111,'
+                },
+                {
+                    'fieldname': 'lead_source',
+                    'label': 'Source of Lead',
+                    'fieldtype': 'Data',
+                    'reqd': 0,
+                },
+                {
+                    'fieldname': 'campaign_name',
+                    'label': 'Campaign Name',
+                    'fieldtype': 'Link',
+                    'options': 'Aisensy Campaign',
+                    'reqd': 1,
+                    'onchange': async function(dialog){
+                        let save=this;
+                        // console.log(save,"Save")
+                        // console.log(d)
+                        // console.log(this)
+                        // console.log(this.value)
+                        await frappe.call({
+                            method: 'frappe.client.get',
+                            args: {
+                                doctype: 'Aisensy Campaign',
+                                filters: { 'name': this.value}
+                            },
+                            callback: function (r) {
+                                var campaign = r.message;
+                                // console.log(r,"R");
+                                if (campaign) {
+                                    // console.log(this.value)
+                                    var template_format = campaign.template_format;
+                                    var template_footer = campaign.template_footer;
+                                    d.set_value('template_message', template_format + template_footer)
+                                    d.set_value('no_of_template_params', campaign.no_of_template_params)
+                                    d.set_value('template_type',campaign.template_type)
+                                    d.set_value('file_name',campaign.file_name)
+                                    d.set_value('url',campaign.url)
+                                    var options = [];
+                                    for (var i = 1; i <= campaign.no_of_template_params; i++) {
+                                        options.push('{{'+i.toString()+'}}');
+                                    }
+                                    // console.log(options)
+                                    d.set_value('parameters',options)
+                                }
+                            }
+                        });
+                        // console.log("MR")
+                    }
+                },
+                {
+                    'fieldname': 'template_type',
+                    'label': 'Template Type',
+                    'fieldtype': 'Select',
+                    'reqd': 0,
+                    'read_only': 1,
+                    'options': ['TEXT','IMAGE','VIDEO','FILE']
+                },
+                {
+                    'fieldname': 'template_message',
+                    'label': 'Template Message',
+                    'fieldtype': 'Text',
+                    'reqd': 0,
+                    'read_only':1
+                },
+                {
+                    'fieldname': 'no_of_template_params',
+                    'label': 'Number of Template Params / Sample Values',
+                    'fieldtype': 'Int',
+                    'reqd': 0,
+                    'read_only': 1
+                },
+                {
+                    'fieldname': 'parameters',
+                    'label': 'Parameters',
+                    'fieldtype': 'Small Text',
+                    'reqd': 0,
+                    'description': 'Format: Ivan,NRK Bank,Nilesh'
+                },
+                {
+                    'fieldname': 'file_name',
+                    'label': 'File Name',
+                    'fieldtype': 'Data',
+                    'reqd': 0
+                },
+                {
+                    'fieldname': 'url',
+                    'label': 'Media URL',
+                    'fieldtype': 'Small Text',
+                    'reqd': 0
+                },
+
+            ],
+            'primary_action_label': 'Submit',
+            'primary_action': async function () {
+
+                let values = this.get_values();
+                // console.log(values);
+                if ((values.template_type == "IMAGE" || values.template_type == "VIDEO" || values.template_type == "FILE") && (values.url == undefined || values.url == '' || values.url == null || values.file_name == undefined || values.file_name == '' || values.file_name == null))
+                {
+                    frappe.msgprint("Please upload Media: "+values.template_type)
+                    return
+                }
+                let authentication_token = await frappe.db.get_single_value('Aisensy Settings', 'authentication_token');
+                let base_url = 'https://backend.aisensy.com/campaign/t1/api';
+
+                let campaign;
+                // console.log("CampaginGGnaMe",values.campaign_name)
+                await frappe.call({
+                    method: 'frappe.client.get',
+                    args: {
+                        doctype: 'Aisensy Campaign',
+                        filters: { 'name': values.campaign_name }
+                    },
+                    callback: function (r) {
+                        // console.log("Campaign",r.message)
+                       campaign=r.message;
+                    }
+                });
+                let contact_numbers = [];
+                let number = '';
+                for (let i = 0; i < values.customer_numbers.length; i++) {
+                    if (values.customer_numbers[i] == ',') {
+                        contact_numbers.push(number)
+                        number = '';
+                        continue;
+                    }
+                    else if (values.customer_numbers[i] == ' ')
+                    {
+                        continue;
+                    }
+                    number += values.customer_numbers[i];
+                }
+                // console.log(contact_numbers)
+                if (number!= '')
+                    contact_numbers.push(value)
+                let invalid_numbers='',valid_numbers=''
+                let message_invalid='',message_valid=''
+                if(contact_numbers.length==0){
+                    frappe.msgprint("Please add any contact Number or check the format for adding numbers.")
+                }
+                for(let i=0;i<contact_numbers.length;i++){
+                    let data = {
+                        "apiKey": authentication_token,
+                        "campaignName": values.campaign_name,
+                        "userName": values.customer_name,
+                        "destination": contact_numbers[i]
+                    }
+                    if (values.lead_source != undefined && values.lead_source != '' && values.lead_source !=null)
+                    {
+                        data.source=values.lead_source;
+                    }
+                    // console.log(values.url + " " + values.file_name)
+                    if (values.url != undefined && values.url != '' && values.url !=null)
+                    {
+                        if (values.file_name != undefined && values.file_name != '' && values.file_name!=null)
+                        {
+                            // console.log(values.url+" "+values.file_name)
+                            data.media = {
+                                "url": values.url,
+                                "filename": values.file_name
+                            };
+                        }
+                    }
+                    let template_params=[];
+                    let value='';
+                    for(let i=0;i<values.parameters.length;i++)
+                    {
+                        if(values.parameters[i]==',')
+                        {
+                            template_params.push(value)
+                            value='';
+                            continue;
+                        }
+                        value+=values.parameters[i];
+                    }
+                    if(value!='')
+                    template_params.push(number)
+                    if (template_params != 'undefined' && template_params != '') {
+                        data.templateParams = template_params;
+                    }
+                    // console.log(data)
+                    // const systemUrl = new URL(window.location.href);
+                    // systemUrl.pathname = "/";
+                    // frappe.call({
+                    //     args: {
+                    //         'contact_number': contact_numbers[i],
+                    //         'base_url': base_url,
+                    //         'data': data
+                    //     },
+                    //     callback: (r) => {
+                    //         console.log(r)
+                    //     },
+                    //     url: systemUrl.origin + '/api/method/journeys.journeys.doctype.aisensy_campaign.aisensy_campaign.message_with_aisensy'
+                    // });
+                    await fetch(base_url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+
+                        },
+                        body: JSON.stringify(data)
+                    }).then(async response =>{
+                        // console.log("Response", response);
+                        // console.log("Response Body",response.body);
+                        if(response.status==200){
+                            if (valid_numbers == '') {
+                                valid_numbers += contact_numbers[i];
+                            }
+                            else
+                                valid_numbers += ', ' + contact_numbers[i];
+                            let message = 'Message moved to sent state, check Aisensy dashboard to for further status. Note: The message may be moved to Failed State, check the dashboard for reasons.';
+                            message_valid=message
+                            frappe.msgprint('For [' + contact_numbers[i]+'], Status 200 : '+ message)
+                            return response.ok;
+                        }
+                        else if(response.status==401){
+                            let message = "Enter valid API Key";
+                            message_invalid = message
+                            frappe.msgprint(message)
+                        }
+                        return await  response.json();
+                    }).then(async response => {
+                        if(response==true)
+                        {
+                            return;
+                        }
+                        // console.log(response, "RESPONSE BODY JSON")
+                        let message = 'Message not sent, ' + response.errorMessage;
+                        if(response.errorMessage=="Invalid Number")
+                        {
+                            if(invalid_numbers==''){
+                                invalid_numbers+=contact_numbers[i];
+                            }
+                            else
+                            invalid_numbers+=', '+contact_numbers[i];
+
+                            frappe.msgprint('For [' + contact_numbers[i] + '], Status ' + response.errorCode + " " + ': '+message)
+                        }
+                        else{
+                        message_invalid = message
+                        frappe.msgprint('For [' + contact_numbers[i] + '], Status ' + response.errorCode + " " + ': '+message)
+                        }
+                    });
+                }
+                // console.log(valid_numbers,"Valid Numbers")
+                // console.log(invalid_numbers,"Invalid Numbers")
+                // console.log(message_valid)
+                // console.log(message_invalid)
+                let message=''
+                if(message_valid.length!=0)
+                {
+                    message=message_valid
+                }
+                else if(message_invalid.length!=0)
+                {
+                    message=message_invalid
+                }
+                else
+                {
+                    message="Please add valid numbers."
+                }
+                // console.log(frappe.datetime.now_datetime())
+                // console.log(message)
+                let message_logs = {
+                    "doctype": "Aisensy Message Logs",
+                    "triggered_from": "Lead Form",
+                    "response_message": message,
+                    "created_at": frappe.datetime.now_datetime(),
+                    "campaign_name": values.campaign_name,
+                    "invalid_numbers": invalid_numbers,
+                    "valid_numbers": valid_numbers
+                };
+                // console.log(message_logs)
+                frappe.db.insert(message_logs);
+                // Do something with the values
+                this.hide();
+            }
+        }).show();
+        d.show();
     }
-    d.show();
+}
+
+function get_dialog_fields(value) {
+    var fields = [];
+
+    // Add fields based on the value of the "value" field
+    for (var i = 0; i < value; i++) {
+        fields.push({
+            label: __('Field {0}', [i + 1]),
+            fieldname: 'field' + i,
+            fieldtype: 'Data',
+            reqd: 1
+        });
+    }
+
+    return fields;
 }
 //Return all fetched phone numbers
 function fetchContactNumbers(event){
-    // console.log("Fetched")
 
     //Fetch All numbers
     let addButton = document.querySelectorAll('.address-box');
-    // console.log(addButton, "AddButton");
     let addButtonHTML = Array.from(addButton).map(button => button.outerHTML);
 
     let html = addButtonHTML.join('');
 
-    // console.log(html, "HTML");
-
     const phoneRegex = /\+?\d{10,}/g;
     const phoneNumbers = html.match(phoneRegex);
-    // console.log(phoneNumbers, "Phoneee numbers");
     return phoneNumbers;
 }

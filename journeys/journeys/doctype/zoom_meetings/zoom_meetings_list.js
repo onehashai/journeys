@@ -6,7 +6,6 @@ frappe.listview_settings['Zoom Meetings'] = {
 
 		/* Parameters in Url, converted to key value pairs. */
 		const urlParams = new URLSearchParams(window.location.search);
-		console.log(urlParams);
 		if (urlParams.get('loggedin') === 'true') {
 
 			//Saving access token in zoom settings
@@ -24,7 +23,6 @@ frappe.listview_settings['Zoom Meetings'] = {
 					d.hide();
 					const baseUrl = new URL(window.location.href);
 					baseUrl.pathname = "/";
-					console.log(window.location.href,baseUrl.origin+'/app/zoom-meetings',"ZoomSettings");
 					window.location.href = baseUrl.origin+'/app/zoom-meetings',"ZoomSettings";
 				}
 			});
@@ -67,7 +65,6 @@ frappe.listview_settings['Zoom Meetings'] = {
 				],
 				primary_action_label: 'Submit',
 				primary_action(values) {
-					console.log("Create zoom meeting");
 					const baseUrl = new URL(window.location.href);
 					baseUrl.pathname = "/";
 					frappe.call({
@@ -80,14 +77,12 @@ frappe.listview_settings['Zoom Meetings'] = {
 						},
 						url: baseUrl.origin+'/api/method/journeys.journeys.doctype.zoom_meetings.zoom_meetings.create_zoom_meeting',
 						success: function (response) {
-							console.log("ClientScriptZoomMeeting List", response);
 						}
 					});
 					d.hide();
 				}
 			});
 			d.show();
-			console.log(d);
 		});
 	},
 	button: {

@@ -2,7 +2,18 @@
 // For license information, please see license.txt
 
 frappe.listview_settings['Knowlarity Call Logs'] = {
-	refresh: function (listview) {
+	refresh: async function (listview) {
+
+		let enabled=await frappe.db.get_single_value('Knowlarity Settings', 'enabled');
+
+		if (!enabled){
+			await frappe.msgprint("Knowlarity Service is not Enabled");
+			const baseUrl = new URL(window.location.href);
+			baseUrl.pathname = "/";
+			window.location.href = baseUrl.origin+'/app';
+			console.log(windows.location.href);
+			return;
+		}
 		let addButton = document.querySelector('.btn.btn-primary.btn-sm.primary-action');
 		addButton.disabled = true;
 

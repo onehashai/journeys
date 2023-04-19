@@ -1,5 +1,8 @@
 // Copyright (c) 2023, OneHash Inc and contributors
 // For license information, please see license.txt
 
-frappe.ui.form.on('Knowlarity Settings', {
+frappe.ui.form.on('Aisensy Campaign', {
+	// refresh: function(frm) {
+
+	// }
 });

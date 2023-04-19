@@ -19,7 +19,6 @@ class ZoomMeetings(Document):
 
 	#This method will run every time a document is saved
 	def before_save(self):
-
 		# Update meeting details in zoom
 		update_zoom_meeting(self)
 	pass
