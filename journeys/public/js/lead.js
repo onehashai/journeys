@@ -2097,8 +2097,9 @@ async function clickToCall(frm,action,method,href){
                     number += values.customer_numbers[i];
                 }
                 // console.log(contact_numbers)
-                if (number!= '')
-                    contact_numbers.push(value)
+                if (number!= ''){
+                    contact_numbers.push(number)
+                }
                 let invalid_numbers='',valid_numbers=''
                 let message_invalid='',message_valid=''
                 if(contact_numbers.length==0){
@@ -2139,8 +2140,9 @@ async function clickToCall(frm,action,method,href){
                         }
                         value+=values.parameters[i];
                     }
-                    if(value!='')
-                    template_params.push(number)
+                    if(value!=''){
+                        template_params.push(value)
+                    }
                     if (template_params != 'undefined' && template_params != '') {
                         data.templateParams = template_params;
                     }
