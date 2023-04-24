@@ -1857,12 +1857,12 @@ frappe.ui.form.on('Lead', {
             }, 6000);
         }
 
-        let knowlarity_enabled = await frappe.db.get_single_value('Knowlarity Settings', 'enabled');
-        let call_hippo_enabled = await frappe.db.get_single_value('CallHippo Settings', 'enabled');
-        let aisensy_enabled = await frappe.db.get_single_value('Aisensy Settings', 'enabled');
+        let knowlarity_enabled_name = await frappe.db.get_single_value('Knowlarity Settings', 'enabled_name');
+        let call_hippo_enabled_name = await frappe.db.get_single_value('CallHippo Settings', 'enabled_name');
+        let aisensy_enabled_name = await frappe.db.get_single_value('Aisensy Settings', 'enabled_name');
 
         // Aisensy Integration
-        if (aisensy_enabled) {
+        if (aisensy_enabled_name) {
             // MessageHistory Aisensy
             frm.add_custom_button(__('Message Logs Aisensy'), function () {
                 frappe.set_route('List', 'Aisensy Message Logs', { });
@@ -1875,7 +1875,7 @@ frappe.ui.form.on('Lead', {
         }
 
         // Knowlarity Integration
-        if (knowlarity_enabled)
+        if (knowlarity_enabled_name)
         {
             // CallHistory Knowlarity
             frm.add_custom_button(__('Call Logs Knowlarity'), function () {
@@ -1889,7 +1889,7 @@ frappe.ui.form.on('Lead', {
         }
 
         // CallHippo Integration
-        if(call_hippo_enabled)
+        if(call_hippo_enabled_name)
         {
             // CallHippo CallHippo
             frm.add_custom_button(__('Call Logs CallHippo'), function () {
@@ -2097,8 +2097,9 @@ async function clickToCall(frm,action,method,href){
                     number += values.customer_numbers[i];
                 }
                 // console.log(contact_numbers)
-                if (number!= '')
-                    contact_numbers.push(value)
+                if (number!= ''){
+                    contact_numbers.push(number)
+                }
                 let invalid_numbers='',valid_numbers=''
                 let message_invalid='',message_valid=''
                 if(contact_numbers.length==0){
@@ -2139,8 +2140,9 @@ async function clickToCall(frm,action,method,href){
                         }
                         value+=values.parameters[i];
                     }
-                    if(value!='')
-                    template_params.push(number)
+                    if(value!=''){
+                        template_params.push(value)
+                    }
                     if (template_params != 'undefined' && template_params != '') {
                         data.templateParams = template_params;
                     }

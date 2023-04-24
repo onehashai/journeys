@@ -3,9 +3,9 @@
 
 frappe.listview_settings['Aisensy Campaign'] = {
 	refresh: async function (frm) {
-		let enabled = await frappe.db.get_single_value('Aisensy Settings', 'enabled');
-		// console.log(enabled, "Enabled")
-		if (!enabled) {
+		let enabled_name = await frappe.db.get_single_value('Aisensy Settings', 'enabled_name');
+		// console.log(enabled_name, "Enabled")
+		if (!enabled_name) {
 			await frappe.msgprint("Aisensy Service is not Enabled");
 			const baseUrl = new URL(window.location.href);
 			baseUrl.pathname = "/";

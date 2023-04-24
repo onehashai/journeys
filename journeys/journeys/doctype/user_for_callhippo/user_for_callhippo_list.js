@@ -3,9 +3,9 @@
 
 frappe.listview_settings['User for callHippo'] = {
 	refresh: async function (listview) {
-		let enabled = await frappe.db.get_single_value('CallHippo Settings', 'enabled');
+		let enabled_name = await frappe.db.get_single_value('CallHippo Settings', 'enabled_name');
 
-		if (!enabled) {
+		if (!enabled_name) {
 			await frappe.msgprint("CallHippo Service is not Enabled");
 			const baseUrl = new URL(window.location.href);
 			baseUrl.pathname = "/";
