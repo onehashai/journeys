@@ -3,6 +3,7 @@
 
 frappe.listview_settings['User for callHippo'] = {
 	refresh: async function (listview) {
+		//Testing
 		let enabled_name = await frappe.db.get_single_value('CallHippo Settings', 'enabled_name');
 
 		if (!enabled_name) {
