@@ -1,0 +1,2 @@
+frappe
+piplapis-python==5.2.2

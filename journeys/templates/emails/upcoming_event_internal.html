@@ -1,0 +1,11 @@
+{% for e in events %}
+<p>
+    <div> Hi {{ e.emp }},<br><br>
+        You have an upcoming Event with {{ e.client }}.<br>
+    </div>
+	<span class="text-bold">{{ e.starts_on }}: </span><span>{{ e.subject }}</span>
+</p>
+{% endfor %}
+<p class="more-info">
+	{{ _("Upcoming Event/Meeting/Demo Alert is sent for Calendar Events.") }}
+</p>

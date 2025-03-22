@@ -1,0 +1,91 @@
+{
+ "actions": [],
+ "creation": "2021-07-21 11:18:12.686810",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "enabled",
+  "api_endpoint",
+  "access_token",
+  "broadcast_name",
+  "add_contact_parameters",
+  "number_of_templates",
+  "number_of_contacts"
+ ],
+ "fields": [
+  {
+   "default": "0",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
+  },
+  {
+   "description": "API EndPoint Url is provided by Wati CRM",
+   "fieldname": "api_endpoint",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "API Endpoint",
+   "reqd": 1
+  },
+  {
+   "description": "Access Token is the authorisation token provided by Wati CRM",
+   "fieldname": "access_token",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Access Token",
+   "reqd": 1
+  },
+  {
+   "default": "Broadcast",
+   "description": "This broadcast name will be used in sending WhatsApp template message",
+   "fieldname": "broadcast_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Broadcast Name",
+   "reqd": 1
+  },
+  {
+   "description": "These WhatsApp Contact Parameters are optional and used to provide attributes/tags to the Contacts saved in Wati CRM",
+   "fieldname": "add_contact_parameters",
+   "fieldtype": "Table",
+   "label": "Add Contact Parameters",
+   "options": "WhatsApp Contact Parameter"
+  },
+  {
+   "description": "Indicates the number of WhatsApp templates to fetch from Wati",
+   "fieldname": "number_of_templates",
+   "fieldtype": "Int",
+   "label": "Number of Templates"
+  },
+  {
+   "description": "Indicates the number of WhatsApp contacts to fetch from Wati",
+   "fieldname": "number_of_contacts",
+   "fieldtype": "Int",
+   "label": "Number of Contacts"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2021-09-14 16:22:54.127813",
+ "modified_by": "Administrator",
+ "module": "Journeys",
+ "name": "Wati Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
